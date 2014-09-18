@@ -19,3 +19,9 @@ _subtract:
 _exit:
     mov r7, #1
     SWI 0
+
+_swap:
+    mov r4, r5     @ r4 is temp
+    mov r5, r6     @ replace r5 with r6
+    mov r6, r4     @ put original value of r5 into r6
+    bal _exit
