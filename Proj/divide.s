@@ -2,8 +2,8 @@
 _start:
     mov r0, #0     @ set the counter to zero
     mov r1, #0     @ holds the mod value
-    mov r5, #11    @ set the numerator
-    mov r6, #5     @ set the denominator
+    mov r5, #111   @ set the numerator
+    mov r6, #6     @ set the denominator
 
 _test:
     cmp r5, r6     @ number - denom 
