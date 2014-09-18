@@ -1,18 +1,18 @@
     .global _start
 _start:
     mov r0, #0     @ set the counter to zero
-    mov r1, #0     @ hold the mod value
+    mov r1, #0     @ holds the mod value
     mov r5, #11    @ set the numerator
     mov r6, #5     @ set the denominator
 
 _test:
-    cmp r5, r6     @ if numer > denom, set N=1
+    cmp r5, r6     @ number - denom 
     bge _subtract  @ numer > denom
-    mov r1, r5     @ whats left of numer is mod result
-    bal _exit
+    mov r1, r5     @ what's left of numer is mod result
+    bal _exit      @ number < denom, exit
 
 _subtract:
-    sub r5, r6     @ subtrac denom from numer
+    sub r5, r6     @ subtract denom from numer
     add r0, r0, #1 @ add 1 to the counter
     bal _test      @ test to again to see if done
 
