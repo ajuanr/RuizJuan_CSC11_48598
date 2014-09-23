@@ -10,7 +10,7 @@ _start:
     mov r4, #0    @ 0=a/b  or  1=a%b
     mov r6, #0    @ s -> r6 has the present scale 10^
     mov r7, #0    @ sf -> r7 scale factor = r3*r6 to subtract
-    mov r8, #0    @ factor -> r8 shift factor 10
+    mov r8, #10    @ factor -> r8 shift factor 10
     mov r9, #0
     mov r0, #0    @ holds a/b if flag not set
     mov r1, r2   @ holds a%b if flag not set
@@ -18,11 +18,13 @@ _start:
 _divmod:
     cmp r3, r1    @ check is denom < numer
     blt _scale     @ go 
+    cmp r4, #1 
+    beq _swap
 
 @ outer do while of divmod function
 _doOuter:
     cmp r6, #1
-    bge scale
+    bge _scale
     
 _doInner:
     add r0, r0, r6  @ increase by scale
@@ -44,7 +46,8 @@ _scale:
 
 _scaleLoop:
     cmp r9, r1       @ check if we hould enter loop
-    blt _doInner      @ if not, exit scaling
+    bge _doInner      @ if not, exit scaling
+    blt _doOuter
     mul r10, r6, r8   @ scale factor, r10 is temp to keep compiler happy
     mov r6, r10      
     mul r10, r3, r6   @ subtraction factor
@@ -68,6 +71,6 @@ _swap:
     mov r0, r1
     mov r1, r5
 
-exit:
+_exit:
     mov r7, #1
     swi 0
