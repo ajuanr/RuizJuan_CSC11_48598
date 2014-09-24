@@ -6,8 +6,8 @@
      .global main
 main:
     mov r2, #111  @ var a
-    mov r3, #5    @ var b
-    mov r4, #1    @ flag: 0=a/b  or  1=a%b
+    mov r3, #4    @ var b
+    mov r4, #0   @ flag: 0=a/b  or  1=a%b
     mov r6, #0    @ s -> r6 has the present scale 10^
     mov r7, #0    @ sf -> r7 scale factor = r3*r6 to subtract
     mov r8, #10    @ factor -> r8 shift factor 10
@@ -27,8 +27,11 @@ _doOuter:
     
 _doOuterTst:
     mov r10, #1       @ use register 10 for next comparison
-    cmp r10, r6       @ in order to be able to use blt instead of bge
-    bge _doOuter
+    cmp r6, r10         @ in order to be able to use blt instead of bge
+    blt _doOuter
+
+    @ if you've reached this point, all loops have finished
+    @ prepare to exit
     cmp r4, #0        @ check the flag 
     beq _exit         @ flag not set 
     bal _swap         @ flag is set
@@ -50,13 +53,13 @@ _scale:
     mul r9, r7, r8
 
 _scaleLoop:
-    cmp r9, r1         @ check if we should continue this function loop
-    bge _doInner       @ if not, exit scaling
     mul r10, r6, r8    @ scale factor, r10 is temp to keep compiler happy
+    cmp r9, r1         @ check if we should enter the scaleLloop
+    bge _doInner       @ if not, exit scaling
     mov r6, r10      
     mul r7, r3, r6     @ subtraction factor
     mul r9, r7, r8     @ next subtraction factor to test
-    bge _scaleLoop
+    blt _scaleLoop
 
 _swap:
     mov r5, r0    @ r5 is temp
