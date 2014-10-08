@@ -12,7 +12,7 @@ message3: .asciz "Hey, type another number: "
  
 /* Second message */
 .balign 4
-message2: .asciz "%d times 5 is %d\n"
+message2: .asciz "%d plus  %d is %d\n"
  
 /* Format pattern for scanf */
 .balign 4
@@ -42,7 +42,7 @@ mult_by_5:
     ldr r1, address_of_return2       /* r1 <- &address_of_return */
     str lr, [r1]                     /* *r1 <- lr */
  
-    add r0, r0, r0, LSL #2           /* r0 <- r0 + 4*r0 */
+    add r0, r0, r1           /* r0 <- r0 + 4*r0 */
  
     ldr lr, address_of_return2       /* lr <- &address_of_return */
     ldr lr, [lr]                     /* lr <- *lr */
@@ -56,10 +56,17 @@ main:
  
     ldr r0, address_of_message1      /* r0 <- &message1 */
     bl printf                        /* call to printf */
- 
+
     ldr r0, address_of_scan_pattern  /* r0 <- &scan_pattern */
     ldr r1, address_of_numer_read   /* r1 <- &number_read */
     bl scanf                         /* call to scanf */
+
+    ldr r0, address_of_message3
+    bl printf
+
+    ldr r0, address_of_scan_pattern
+    ldr r2, address_of_denom_read
+    bl scanf
  
     ldr r0, address_of_numer_read   /* r0 <- &number_read */
     ldr r0, [r0]                     /* r0 <- *r0 */
@@ -79,6 +86,7 @@ address_of_message2 : .word message2
 address_of_message3 : .word message3
 address_of_scan_pattern : .word scan_pattern
 address_of_numer_read : .word numer_read
+address_of_denom_read : .word denom_read
 address_of_return : .word return
  
 /* External */
