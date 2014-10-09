@@ -47,7 +47,7 @@ main:
     mov r5, r5, lsr#1
     cmp r1, r5
     blt _ScaleR
-    bgt _asTest
+    bge _asTest
 
 _exit:
     mov r7, #1
