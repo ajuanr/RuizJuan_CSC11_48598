@@ -7,7 +7,7 @@ message1: .asciz "Hey, type in two numbers: "
  
 /* Second message */
 .balign 4
-message2: .asciz "%d times 5 is %d\n"
+message2: .asciz "%d plus %d is %d\n"
  
 /* Format pattern for scanf */
 .balign 4
@@ -35,7 +35,7 @@ mult_by_5:
     ldr r1, address_of_return2       /* r1 <- &address_of_return */
     str lr, [r1]                     /* *r1 <- lr */
  
-    add r0, r0, r0            /* r0 <- r0 + 4*r0 */
+    add r0, r0, r2            /* r0 <- r0 + 4*r0 */
  
     ldr lr, address_of_return2       /* lr <- &address_of_return */
     ldr lr, [lr]                     /* lr <- *lr */
@@ -57,9 +57,11 @@ main:
  
     ldr r0, address_of_number_read   /* r0 <- &number_read */
     ldr r0, [r0]                     /* r0 <- *r0 */
+    ldr r2, address_of_denom_read
+    ldr r2, [r2]
     bl mult_by_5
  
-    mov r2, r0                       /* r2 <- r0 */
+    mov r3, r0                       /* r2 <- r0 */
     ldr r1, address_of_number_read   /* r1 <- &number_read */
     ldr r1, [r1]                     /* r1 <- *r1 */
     ldr r0, address_of_message2      /* r0 <- &message2 */
