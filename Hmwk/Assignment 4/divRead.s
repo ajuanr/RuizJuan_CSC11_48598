@@ -65,7 +65,7 @@ mult_by_5:
     bal _ScaleR
 
     _asTest:
-    cmp r4, #1  @ test whether addSbu loop should continue
+    cmp r4, #1  @ test whether addSub loop should continue
     bge _addSub 
     bal _exit
 
@@ -75,7 +75,7 @@ mult_by_5:
     mov r5, r5, lsr#1
     cmp r1, r5
     blt _ScaleR
-    bgt _asTest
+    bge _asTest
 
     _exit:
     bx lr

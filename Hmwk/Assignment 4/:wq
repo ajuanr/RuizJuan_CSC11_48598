@@ -10,8 +10,8 @@
 
 main:
     @ declare variables in intitialize r2/r3 => r0  r2%r3 =>r1
-    mov r2, #24
-    mov r3, #6
+    mov r2, #111
+    mov r3, #5
     mov r4, #1
     mov r5, r3
     mov r0, #0
@@ -47,7 +47,7 @@ main:
     mov r5, r5, lsr#1
     cmp r1, r5
     blt _ScaleR
-    bgt _asTest
+    bge _asTest
 
 _exit:
     mov r7, #1
