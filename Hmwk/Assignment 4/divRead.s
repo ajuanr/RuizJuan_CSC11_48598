@@ -54,7 +54,7 @@ mult_by_5:
     mov r4, r4, lsl#1
     mov r5, r5, lsl#1
     cmp r1, r5
-    bgt _scaleL
+    bge _scaleL
     mov r4, r4, lsr#1
     mov r5, r5, lsr#1
     
