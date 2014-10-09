@@ -90,12 +90,6 @@ mult_by_5:
     blt _ScaleR
     bge _asTest
 
-    ldr r2, address_of_div
-    ldr r2, [r0]
-
-    ldr r3, address_of_mod
-    ldr r3, [r1]
-
     _exit:
     bx lr
 
@@ -122,12 +116,14 @@ main:
     ldr r2, [r2]
     bl mult_by_5
  
-    @mov r2, r3
+    mov r8, r0
+    mov r9, r1
+
     ldr r2, address_of_denom_read
     ldr r2, [r2]
-    @mov r3, r0                       /* r3 <- r0 */
-    ldr r3, address_of_div
-    ldr r3, [r3]
+    mov r3, r8 
+    @ldr r3, address_of_div
+    @ldr r3, [r3]
     ldr r1, address_of_number_read   /* r1 <- &number_read */
     ldr r1, [r1]                     /* r1 <- *r1 */
     ldr r0, address_of_message2      /* r0 <- &message2 */
@@ -138,8 +134,9 @@ main:
     ldr r1, [r1]
     ldr r2, address_of_denom_read
     ldr r2, [r2]
-    ldr r3, address_of_mod
-    ldr r3, [r3]
+    mov r3, r9
+    @ldr r3, address_of_mod
+    @ldr r3, [r3]
     ldr r0, address_of_message4
 
     bl printf
