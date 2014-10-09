@@ -9,9 +9,8 @@ message1: .asciz "Hey, type in two numbers: "
 .balign 4
 message2: .asciz "%d \\ %d = %d\n"
 
-
 .balign 4
-message4: .asciz "%d %% %d = %d\n"
+message3: .asciz "%d %% %d = %d\n"
 
 /* Format pattern for scanf */
 .balign 4
@@ -123,7 +122,7 @@ main:
     ldr r2, address_of_denom_read
     ldr r2, [r2]
     mov r3, r9
-    ldr r0, address_of_message4
+    ldr r0, address_of_message3
     bl printf
 
     ldr lr, address_of_return        /* lr <- &address_of_return */
@@ -135,7 +134,7 @@ address_of_scan_pattern : .word scan_pattern
 address_of_number_read : .word number_read
 address_of_return : .word return
 address_of_denom_read : .word denom_read
-address_of_message4: .word message4
+address_of_message3: .word message3
  
 /* External */
 .global printf
