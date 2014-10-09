@@ -7,20 +7,11 @@ message1: .asciz "Hey, type in two numbers: "
  
 /* Second message */
 .balign 4
-message2: .asciz "%d divided by %d is %d\n"
+message2: .asciz "%d \\ %d = %d\n"
 
 
 .balign 4
-message4: .asciz "%d mod %d is %d\n"
- 
-/* Holds result of division */
-.balign 4
-div: .word 0
-
-/* Holds mod result */
-.balign 4
-mod: .word 0
-
+message4: .asciz "%d %% %d = %d\n"
 
 /* Format pattern for scanf */
 .balign 4
@@ -42,9 +33,9 @@ return2: .word 0
 .text
  
 /*
-mult_by_5 function
+divide function
 */
-mult_by_5:
+divide:
     ldr r1, address_of_return2       /* r1 <- &address_of_return */
     str lr, [r1]                     /* *r1 <- lr */
 
@@ -94,8 +85,6 @@ mult_by_5:
     bx lr
 
 address_of_return2 : .word return2
-address_of_div: .word div
-address_of_mod: .word mod
  
 .global main
 main:
@@ -114,32 +103,29 @@ main:
     ldr r0, [r0]                     /* r0 <- *r0 */
     ldr r2, address_of_denom_read
     ldr r2, [r2]
-    bl mult_by_5
+    bl divide
  
-    mov r8, r0
-    mov r9, r1
+    mov r8, r0                       /* holds a/b */
+    mov r9, r1                       /* holds a%b */
 
+    /* Print a/b */
     ldr r2, address_of_denom_read
     ldr r2, [r2]
     mov r3, r8 
-    @ldr r3, address_of_div
-    @ldr r3, [r3]
     ldr r1, address_of_number_read   /* r1 <- &number_read */
     ldr r1, [r1]                     /* r1 <- *r1 */
     ldr r0, address_of_message2      /* r0 <- &message2 */
     bl printf                        /* call to printf */
  
-
+    /* Print a%b */
     ldr r1, address_of_number_read
     ldr r1, [r1]
     ldr r2, address_of_denom_read
     ldr r2, [r2]
     mov r3, r9
-    @ldr r3, address_of_mod
-    @ldr r3, [r3]
     ldr r0, address_of_message4
-
     bl printf
+
     ldr lr, address_of_return        /* lr <- &address_of_return */
     ldr lr, [lr]                     /* lr <- *lr */
     bx lr                            /* return from main using lr */
