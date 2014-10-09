@@ -16,7 +16,7 @@ message2: .asciz "%d plus  %d is %d\n"
  
 /* Format pattern for scanf */
 .balign 4
-scan_pattern : .asciz "%d %d"
+scan_pattern : .asciz "%d"
  
 /* Where scanf will store the number read */
 .balign 4
@@ -39,10 +39,10 @@ return2: .word 0
 mult_by_5 function
 */
 mult_by_5:
-    ldr r4, address_of_return2       /* r1 <- &address_of_return */
-    str lr, [r4]                     /* *r1 <- lr */
+    ldr r2, address_of_return2       /* r1 <- &address_of_return */
+    str lr, [r2]                     /* *r1 <- lr */
  
-    add r0, r0, r0           /* r0 <- r0 + 4*r0 */
+    add r0, r0, r1           /* r0 <- r0 + 4*r0 */
  
     ldr lr, address_of_return2       /* lr <- &address_of_return */
     ldr lr, [lr]                     /* lr <- *lr */
@@ -55,27 +55,30 @@ main:
     str lr, [r1]                     /* *r1 <- lr */
  
     ldr r0, address_of_message1      /* r0 <- &message1 */
-    ldr r2, address_of_message3
     bl printf                        /* call to printf */
 
     ldr r0, address_of_scan_pattern  /* r0 <- &scan_pattern */
     ldr r1, address_of_numer_read   /* r1 <- &number_read */
-    ldr r3, address_of_denom_read
     bl scanf                         /* call to scanf */
 
+    ldr r0, address_of_message3     /*print the second message*/
+    bl printf
+
+    ldr r0, address_of_scan_pattern  /* r0 <- &scan_pattern */
+    ldr r2, address_of_denom_read
+    bl scanf
  
     ldr r0, address_of_numer_read   /* r0 <- &number_read */
     ldr r0, [r0]                     /* r0 <- *r0 */
-    ldr r1, address_of_denom_read
-    ldr r1, [r1]
+
+    ldr r1, address_of_denom_read  /* r1 <- @ denom_read */
+    ldr r1, [r1]                    /* r1 <- *r1 */
 
     bl mult_by_5
  
     mov r3, r0                       /* r2 <- r0 */
     ldr r1, address_of_numer_read   /* r1 <- &number_read */
     ldr r1, [r1]                     /* r1 <- *r1 */
-    ldr r2, addresss_of_denom_read
-    ldr r2, [r2]
     ldr r0, address_of_message2      /* r0 <- &message2 */
     bl printf                        /* call to printf */
  
