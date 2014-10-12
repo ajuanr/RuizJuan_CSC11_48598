@@ -28,9 +28,6 @@ denom_read: .word 0
 return: .word 0
  
 .balign 4
-return2: .word 0
-
-.balign 4
 return3: .word 0
 
 /* Prompt to quit */
@@ -94,8 +91,6 @@ divide:
 
     _exit:
     bx lr
-
-address_of_return2 : .word return2
 
 /* Perform division, asks user whether or not to repeat */ 
 divRead:
