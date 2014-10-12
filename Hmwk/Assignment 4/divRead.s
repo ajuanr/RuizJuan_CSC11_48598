@@ -5,10 +5,11 @@
 .balign 4
 message1: .asciz "Hey, type in two numbers: "
  
-/* Second message */
+/* Division result message */
 .balign 4
 message2: .asciz "%d \\ %d = %d\n"
 
+/* Mod result message */
 .balign 4
 message3: .asciz "%d %% %d = %d\n"
 

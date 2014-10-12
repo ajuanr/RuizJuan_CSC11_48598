@@ -5,10 +5,11 @@
 .balign 4
 message1: .asciz "Hey, type in two numbers: "
  
-/* Second message */
+/* Division result message */
 .balign 4
 message2: .asciz "%d \\ %d = %d\n"
 
+/* Mod result message */
 .balign 4
 message3: .asciz "%d %% %d = %d\n"
 
@@ -32,9 +33,11 @@ return2: .word 0
 .balign 4
 return3: .word 0
 
+/* Prompt to quit */
 .balign 4
 prompt: .asciz "-1 to quit: "
 
+/* User input to repeat division */
 .balign 4
 ans_format: .asciz "%d"
 
@@ -47,9 +50,6 @@ ans: .word 0
 divide function
 */
 divide:
-    ldr r1, address_of_return2       /* r1 <- &address_of_return */
-    str lr, [r1]                     /* *r1 <- lr */
-
     @ declare variables in intitialize r2/r3 => r0  r2%r3 =>r1
     ldr r2, address_of_number_read
     ldr r2, [r2]
@@ -96,7 +96,8 @@ divide:
     bx lr
 
 address_of_return2 : .word return2
- 
+
+/* Perform division, asks user whether or not to repeat */ 
 divRead:
     ldr r1, address_of_return        /* r1 <- &address_of_return */
     str lr, [r1]                     /* *r1 <- lr */
@@ -149,11 +150,7 @@ address_of_message3: .word message3
 
 .global main
 main:
-    ldr r1, address_of_return3
-    str lr, [r1]
-
     _doWhile:
-
     bl divRead
 
     ldr r0, address_of_prompt
@@ -169,9 +166,8 @@ main:
     cmp r0, #-1
     bgt _doWhile
 
-    ldr lr, address_of_return3
-    ldr lr, [lr]
-    bx lr
+    mov r7, #1
+    swi 0
 
 address_of_return3 : .word return3
 address_of_prompt : .word prompt
