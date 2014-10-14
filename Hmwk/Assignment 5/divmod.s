@@ -15,12 +15,22 @@
     
     @scale left
     scaleL:
+    sub sp, sp, #16
+    str lr, [sp]
+    str r4, [sp]
+    str r5, [sp]
     mov r4, r4, lsl#1
     mov r5, r5, lsl#1
     cmp r1, r5
     bgezl scaleL
     mov r4, r4, lsr#1
     mov r5, r5, lsr#1
+
+    /* Restore original values */
+    ldr r5, [sp]
+    ldr r4, [sp]
+    ldr lr, [sp]
+    add sp, sp, #16
     
     @add sub
     addSub:
