@@ -47,35 +47,44 @@ divMod:
     bl addSub
     
 @scale left
-scaleL:
+scaleLeft:
     push {lr}
-    mov r3, r3, lsl#1
-    mov r2, r2, lsl#1
+    doWhile_r1_ge_r2:
+        mov r3, r3, lsl#1
+        mov r2, r2, lsl#1
     cmp r1, r2
-    bge scaleL
+    bge doWhile_r1_ge_r2
     mov r3, r3, lsr#1
     mov r2, r2, lsr#1
+
+    /* Leave the function */
     pop {lr}
+    bx lr
     
 @add sub
 addSub:
     push {lr}
-    add r0, r0, r3
-    sub r1, r1, r2
-    bl ScaleRight
-
+    doWhile_r3_ge_1:
+        add r0, r0, r3
+        sub r1, r1, r2
+        bl scaleRight
     cmp r3, #1  @ test whether addSub loop should continue
-    bge scaleRight
+    bl doWhile_r3_ge_1
+
     pop {lr}     /* Exit the function */
+    bx lr
 
 @scale right
-_ScaleRight:
+scaleRight:
     push {lr}
-    mov r3, r3, lsr#1
-    mov r2, r2, lsr#1
+    doWhile_r1_lt_r2:
+        mov r3, r3, lsr#1
+        mov r2, r2, lsr#1
     cmp r1, r2
-    blt _ScaleR
+    blt doWhile_r1_lt_r2
+
     pop {lr}
+    bx lr
 
 exit:
     pop {lr}
