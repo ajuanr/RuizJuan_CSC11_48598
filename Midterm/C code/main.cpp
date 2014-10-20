@@ -10,12 +10,13 @@
 using namespace std;
 
 void problem1();
-
+void problem2();
+void bill(int&, int&, int&, int&);
 /*
  * 
  */
 int main(int argc, char** argv) {
-    problem1();
+    problem2();
     return 0;
 }
 
@@ -31,9 +32,10 @@ void problem1() {
     cout << "Hours: " << r1 << endl;
     cout << "Pay rate: " << r2 << endl;
     
+    /// remember r4 must be preserved: push {r4}
     // check if triple time applies
     if ( r2 > 40) {
-        r4 = r2 - 40;           // r3 holds hours > 40 worked
+        r4 = r2 - 40;           // r4 holds hours > 40 worked
         r3 = r1 * 3;            // triple time pay
         r3 = r3 * r4;           // r3 holds that amount of triple time pay
         r2 = r2 - r4;           // move hours into double time
@@ -43,7 +45,7 @@ void problem1() {
     
     // check if double time applies
     if ( r2 > 20) {
-        r4 = r2 - 20;           // r3 holds hours > 20 worked
+        r4 = r2 - 20;           // r4 holds hours > 20 worked
         r3 = r1 * 2;            // double time pay
         r3 = r3 * r4;           // r3 holds that amount of double time pay
         r2 = r2 - r4;           // move hours into straight time
@@ -56,5 +58,22 @@ void problem1() {
         r0 = r0 + r3;
     }
     cout << "Pay: " << r0 << endl;
+    
+}
+
+void problem2() {
+    int r0 = 0;         // r0 holds bill amount
+    cout << "Which package do you have: 1,2,or 3: ";
+    int r1;             // r1 will hold the package;
+    cin >> r1;
+    cout << "How many hours did you use: ";
+    int r2;             // r2 will hold the
+    cin >> r2;
+    int r3 = 4 - r1;    // holds the rate per hour
+    
+    bill(r0, r1, r2, r3);
+}
+
+void bill (int &r1, int &r2, int &r3) {
     
 }
