@@ -31,21 +31,20 @@ void problem1() {
     
     // check if triple time applies
     if ( r1 > 40) {
-        // r3 = r1-20;             // holds number of hours over 40
-        r1 = r1 - 20;           // shift hours into double time
-        r3 = r1 * r2*3;           //r3 now holds that amount of triple time pay
-        r0 = r0 + r3;
-        cout << r0 << endl;
+        r3 = r1-40;               // holds number of hours over 40
+        r1 = r1 - 20;             // shift hours into double time
+        r3 = r3 * r2*3;           // r3 holds that amount of triple time pay
+        r0 = r0 + r3;             // add to total pay
     }
     
     // check if double time applies
     if ( r1 > 20) {
-        //r3 = r1-20;             // holds number of hours over 40
-        r1 = r1 - 20;           // shift hours into straight time
-        r3 = r1 * r2*2;           //r3 now holds that amount of triple time pay
+        r3 = r1-20;               // holds number of hours over 20
+        r1 = r1 - 20;            // shift hours into straight time
+        r3 = r3 * r2*2;           //r3 now holds that amount of triple time pay
         r0 = r0 + r3;
-        cout << r0 << endl;
     }
+    
     // check if straight time applies
     if ( r1 > 0) {
         r3 = r1 * r2;
