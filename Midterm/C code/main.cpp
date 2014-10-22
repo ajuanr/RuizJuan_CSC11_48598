@@ -78,10 +78,41 @@ void problem2() {
 void bill (int &r1, int &r2) {
     int r0 = 5 * r1;                 // r0 will hold bill amount
     r0 = r0 + 25;                  // r0 now holds base bill
-    cout << r0;
-    int r3 = 11*r1;                   // remember to preserve r4
-    r3 = r3 * 2;                // hours over this charged at max rate
+    
+    int r3 = 11*r1;             // base hours allowed
+    r3 = r3<<1;                // hours over this charged at max rate
+
+    int r4;                     // holds hours over differential
+                                // preserve this value. push {r4}
+    
+    int r5 = 4- r1;             // r5 holds the charge per hour over base
+    
     if (r2 > r3) {
-        ;
+        r4 = r2 - r3;           // r4 holds hours > than highest cost
+        r5=r5<<1;               // change rate to max rate
+        r2 = r2 - r4;           // move hours into lower tier
+        r4 = r4 * r5;
+        cout << "r4: " << r4 << endl;
+        
+        
+        r0 = r0 + r4;           // add to total pay
+        cout << "r0: " << r0 << endl;
+        
+    }
+    // shift hour tier
+    r3 = r3>>1;
+    cout << r2 << endl;
+    if (r2 > r3) {
+        r4 = r2 - r3;           // r4 holds hours > than highest cost
+         cout << "r4: " << r4 << endl;
+        r5=r5>>1;               // change rate lower rate
+        cout << "r5: " << r5 << endl;
+        r4 = r4 * r5;
+       
+        r2 = r2 - r4;           // move hours into lower tier
+        
+        r0 = r0 + r4;           // add to total pay
+        cout << "r0: " << r0 << endl;
+        
     }
 }
