@@ -11,7 +11,7 @@ using namespace std;
 
 void problem1();
 void problem2();
-void bill(int&, int&, int&, int&);
+void bill(int&, int&);
 /*
  * 
  */
@@ -69,11 +69,19 @@ void problem2() {
     cout << "How many hours did you use: ";
     int r2;             // r2 will hold the
     cin >> r2;
-    int r3 = 4 - r1;    // holds the rate per hour
     
-    bill(r0, r1, r2, r3);
+    bill(r1, r2);
 }
 
-void bill (int &r1, int &r2, int &r3) {
-    
+//Input r1 = Package
+//      r2 = Number of hours
+void bill (int &r1, int &r2) {
+    int r0 = 5 * r1;                 // r0 will hold bill amount
+    r0 = r0 + 25;                  // r0 now holds base bill
+    cout << r0;
+    int r3 = 11*r1;                   // remember to preserve r4
+    r3 = r3 * 2;                // hours over this charged at max rate
+    if (r2 > r3) {
+        ;
+    }
 }
