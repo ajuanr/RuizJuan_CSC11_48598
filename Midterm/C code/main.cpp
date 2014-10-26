@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   main.cpp
  * Author: rcc
  *
@@ -12,8 +12,9 @@ using namespace std;
 void problem1();
 void problem2();
 void bill(int&, int&);
+void prob2();
 /*
- * 
+ *
  */
 int main(int argc, char** argv) {
     problem2();
@@ -22,15 +23,16 @@ int main(int argc, char** argv) {
 
 void problem1() {
     cout << "Enter the pay rate and hours worked: ";
-    int r0=0;             // total pay
     int r1;               // pay rate
     int r2;               // hours worked
     int r3;               // temp
-    int r4;               // holds hours > than pay differential
+    
     cin >> r1 >> r2;
     
-    cout << "Hours: " << r1 << endl;
-    cout << "Pay rate: " << r2 << endl;
+    int r0 = 5 * r1;                 // r0 will hold bill amount
+    r0 = r0 + 25;                  // r0 now holds base bill
+    
+    int r4 = 11 * r1;               // holds hours > than pay differential
     
     /// remember r4 must be preserved: push {r4}
     // check if triple time applies
@@ -62,58 +64,44 @@ void problem1() {
 }
 
 void problem2() {
-    int r0 = 0;         // r0 holds bill amount
     cout << "Which package do you have: 1,2,or 3: ";
     int r1;             // r1 will hold the package;
     cin >> r1;
     cout << "How many hours did you use: ";
-    int r2;             // r2 will hold the
+    int r2;             // r2 will hold the hours
     cin >> r2;
-    
-    bill(r1, r2);
-}
 
-//Input r1 = Package
-//      r2 = Number of hours
-void bill (int &r1, int &r2) {
     int r0 = 5 * r1;                 // r0 will hold bill amount
     r0 = r0 + 25;                  // r0 now holds base bill
-    
+                                    // always part of bill
     int r3 = 11*r1;             // base hours allowed
+    r1 = 4 - r1;                // this is the rate charge
     r3 = r3<<1;                // hours over this charged at max rate
-
-    int r4;                     // holds hours over differential
-                                // preserve this value. push {r4}
     
-    int r5 = 4 - r1;             // r5 holds the charge per hour over base
-    cout<< "r2: " << r2 << endl;
-    cout << "r3: " << r3 << endl;
-    cout << "r5: " << r5 << endl;
+    int r4;                     // holds hours over differential
+    // preserve this value. push {r4}
+    
+    //nt r5 = 4 - r1;             // r5 holds the charge per hour over base
     if (r2 > r3) {
         r4 = r2 - r3;           // r4 holds hours > than highest cost
-        r5=r5<<1;               // change rate to max rate
+        r1=r1<<1;               // change rate to max rate
         r2 = r2 - r4;           // move hours into lower tier
-        r4 = r4 * r5;
-        cout << "r4: " << r4 << endl;
-        
+        r4 = r4 * r1;           // hours over times rate
         
         r0 = r0 + r4;           // add to total pay
-        cout << "r0: " << r0 << endl;
-        cout << "hello\n";
+        r1=r1>>1;               // shift rate back down
     }
+    
     // shift hour tier
     r3 = r3>>1;
     if (r2 > r3) {
         r4 = r2 - r3;           // r4 holds hours > than base cost
-         cout << "r4: " << r4 << endl;
-        r5=r5>>1;               // change rate lower rate
-        cout << "r5: " << r5 << endl;
-        r4 = r4 * r5;
-       
+        r4 = r4 * r1;
+        
         r2 = r2 - r4;           // move hours into lower tier
         
         r0 = r0 + r4;           // add to total pay
-        cout << "r0: " << r0 << endl;
         
     }
+    cout << "r0: " << r0 << endl;
 }
