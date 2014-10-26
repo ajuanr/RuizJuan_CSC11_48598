@@ -17,20 +17,18 @@ void prob2();
  *
  */
 int main(int argc, char** argv) {
-    problem2();
+    problem1();
     return 0;
 }
 
 void problem1() {
     cout << "Enter the pay rate and hours worked: ";
+    int r0 = 0;
     int r1;               // pay rate
     int r2;               // hours worked
     int r3;               // temp
     
     cin >> r1 >> r2;
-    
-    int r0 = 5 * r1;                 // r0 will hold bill amount
-    r0 = r0 + 25;                  // r0 now holds base bill
     
     int r4 = 11 * r1;               // holds hours > than pay differential
     
