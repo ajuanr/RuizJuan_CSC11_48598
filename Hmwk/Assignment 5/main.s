@@ -1,3 +1,12 @@
+/* To compile 
+ *   scaleLeft.s
+ *   scaleRight.s
+ *   addSub.s
+ *   divMod.s
+ *   main.s
+ */
+
+
 .data
 /* First message */
 .balign 4
