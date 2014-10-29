@@ -5,6 +5,8 @@
  * Project 1 - 48598
  *
  * Created on October 27, 2014, 11:43 AM
+ * Play a simplefied version of mastermind
+ *
  *  Expand later by adding colors to the numbers
  * i.e add red, green, blue
  * choice now becomes something like red 3 or green 3
