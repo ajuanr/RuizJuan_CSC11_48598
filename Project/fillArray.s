@@ -20,14 +20,16 @@ main:
    ldr r0, address_of_message
    bl printf
 
-   ldr r0, address_of_master
+   ldr r1, address_of_master
    
    mov r2, #0
-   loop;
+   loop:
    cmp r2, #3
    beq exit
    
-   str r2, [r0, LSL r2]
+   str r2, [r1, +r2, lsl #1]
+   add r2, #1
+   bal loop
 
    exit:
    add sp, #4
