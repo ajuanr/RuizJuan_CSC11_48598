@@ -31,13 +31,18 @@ numsRead: .asciz "You entered %d, %d, and %d\n"
     .global main
 
 main:
+    push {lr}
+    sub sp, #4      /* 8-byte align sp */
     ldr r0, address_of_instruct
     bl printf
 
+    add sp, #4    /* remove padding */ 
+    pop {lr}
     bx lr
 
 
 address_of_instruct: .word instruct   
+address_of_numsRead: .word numsRead
 
 
 .global printf
