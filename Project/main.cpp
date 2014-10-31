@@ -44,8 +44,6 @@ int main(int argc, char** argv) {
         cout << nWrong(r0, guessArray, SIZE) << " in wrong position\n";
         cout << endl;
     }
-    
-    
     return 0;
 }
 
@@ -55,13 +53,10 @@ void fillArray(int *r0, int r1) {
         int r3 = rand() % 7 + 1;
         *(r0 + r2) = r3;
     }
-    
 }
 
 // r1 is the number of elements to guess
 void  guess(int *array, int r1) {
-
-    
     cout << "Enter numbers between 1 and 7\n";
     for (int r2 = 0; r2 != r1; ++r2) {
         cout << "Enter guess " << r2+1 << ": ";
@@ -69,7 +64,6 @@ void  guess(int *array, int r1) {
         cin >> r3;
         *(array+r2)=r3;
     }
-
 }
 
 int nRight(int *r1, int *r2, int size) {
