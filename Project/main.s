@@ -23,6 +23,10 @@ scan: .asciz "%d"
 .balign 4
 numsRead: .asciz "You entered %d, %d, and %d\n"
 
+
+/*********************************
+ ***********   Main   ************
+ *********************************/
 .text
     .global main
 
@@ -34,3 +38,6 @@ main:
 
 
 address_of_instruct: .word instruct   
+
+
+.global printf
