@@ -14,34 +14,36 @@ message: .asciz "This array contains 3 elements\n"
 .text
     .global main
 main:
+   /* Save the link registers */
    push {lr}
    sub sp, #4
 
+   /* Prompt for user */
    ldr r0, address_of_message
    bl printf
 
-   ldr r1, address_of_master
-   
+   /* Save the array */
+   ldr r2, address_of_master
 
    /* fill the array */
-   mov r2, #0
+   mov r3, #0
    fillLoop:
-       cmp r2, #3
+       cmp r3, #3
        beq exit
-       str r2, [r1], +#4       /* r1+r2*4 <- r2 */
-       add r2, #1
+       str r3, [r2], +#4       /* r1+r2*4 <- r2 */
+       add r3, #1
        bal fillLoop
 
    /* print the elements */
    ldr r0, address_of_num
-   @sub r1, r2, lsl #2
-   mov r2, #0
+   mov r3, #0
    printLoop: 
-       cmp r2, #3
+       cmp r3, #3
        beq exit
-       mov r1, #7
+       ldr r1, [r2], +#4
+       ldr r1, [r1]
        bl printf
-       add r2, #1
+       add r3, #1
        bal printLoop
 
    exit:
