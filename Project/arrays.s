@@ -21,12 +21,9 @@ random:
 
     mov r1,r0,ASR #1             /* In case random return is negative */
     mov r2,#8                   /* Move 8 to r2 */
-	                         /* We want rand()%8 so cal divMod with rand()%8 */
+	                         /* We want rand()%8 */
     bl divMod                    /* Call divMod function to get remainder */
 
-    mov r1, r0
-    ldr r0, address_of_numRead
-    bl printf
 	
     pop {lr}                     /* Pop the top of the stack and put it in lr */
     bx lr                        /* Leave main */
@@ -34,37 +31,35 @@ random:
 
 /* fill the array */
 fill:
-    push {lr}
+    push {r4,lr}
     /* Save the array */
-    mov r3, #0
+    mov r4, #0
     fillLoop:
-        cmp r3, #3                   /* have we reached 3 yet */
+        cmp r4, #3                   /* have we reached 3 yet */
         beq exit_fill
         bl random
-    ldr r2, address_of_a         /* r0 <- master */
-
-
+        ldr r2, address_of_a         /* r0 <- master */
         
-        str r3, [r2, r3, lsl #2]     /* (*r1  ← r2) + #4 */
-        add r3, r3, #1
+        str r1, [r2, r3, lsl #2]     /* (*r1  ← r2) + #4 */
+        add r4, r4, #1
         bal fillLoop
    
     /* Exit the function */    
     exit_fill:
-      pop {lr}
+      pop {r4, lr}
       bx lr
 
 
 /* print the array elements */
 print:
   push {lr}
-  ldr r2, address_of_a
-  mov r3, #0
+  ldr r1, address_of_a
+  mov r2, #0
   printLoop:
      cmp r3, #3
      beq exit_print
-     ldr r1, [r2, r3, lsl #2]
-     add r3, r3, #1
+     ldr r1, [r1, r2, lsl #2]
+     add r2, r2, #1
      bal printLoop
 
   /* exit print function */
