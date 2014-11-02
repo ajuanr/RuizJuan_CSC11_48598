@@ -8,10 +8,10 @@ a: .skip 12
 usrAray: .skip 12
 
 /* Prompt */
-prompt: .asciz "Enter a number between 0-7\n"
+prompt: .asciz "Enter three numbers between 0-7\n"
 
 /* Result of guess */
-result: .asciz "You got %d correct and %d wrong\n"
+result: .asciz "You got %d in the correct spot and %d in the wrong spot\n"
 
 /* scan format */
 .balign 4
@@ -36,7 +36,7 @@ random:
     push {lr}                 /* Push lr onto the top of the stack */
     bl rand                      /* Call rand */
 
-    mov r1,r0,ASR #1             /* In case random return is negative */
+    mov r1, r0, asr #1             /* In case random return is negative */
     mov r2,#8                   /* Move 8 to r2 */
 	                         /* We want rand()%8 */
     bl divMod                    /* Call divMod function to get remainder */
@@ -85,33 +85,41 @@ game:
      push {r4,lr}
      mov r4, #3     /* max possible right/wrong */
      guess:
-     mov r0, #0     /* holds number correct */
-     mov r1, #0     /* holds number incorrect */
+        mov r0, #0     /* holds number correct */
+        mov r1, #0     /* holds number incorrect */
         bl read                  /* get user guess */
-        ldr r2, address_of_num1
+
+        /* compare first value with guess */
+        ldr r2, address_of_num1  
+        ldr r2, [r2]
         ldr r3, address_of_a
         ldr r3, [r3, +#0]
-        cmp r2, r3
+        cmp r2, r3               /* does player guess match value in array */
         beq guess2               /* numbers matched don't add to wrong guess */
         add r1, r1, #1           /* numbers not equal*/
 
         guess2:
-        ldr r2, address_of_num2
-        ldr r3, address_of_a
-        ldr r3, [r3, +#4]
-        beq guess3
-        add r1, r1, #1
+            ldr r2, address_of_num2
+            ldr r2, [r2]
+            ldr r3, address_of_a
+            ldr r3, [r3, +#4]
+            cmp r2, r3
+            beq guess3
+            add r1, r1, #1
 
         guess3:
-        ldr r2, address_of_num3
-        ldr r3, address_of_a
-        ldr r3, [r3, +#8]
-        beq done
-        add r1, r1, #1
-        done:  
+            ldr r2, address_of_num3
+            ldr r2, [r2]
+            ldr r3, address_of_a
+            ldr r3, [r3, +#8]
+            cmp r2, r3
+            beq done
+            add r1, r1, #1
+
+        done:                      /* Player has entered numbers */
             sub r0, r4, r1         /* r0 now holds number of correct guesses */ 
-            cmp r0, #3         
-            /* Right/wrong in r0/r1 */
+            cmp r0, #3             /* if r0==3 then all guesses were correct */ 
+                                   /* Right/wrong in r0/r1, put in r1, r2 for printing */
             mov r2, r1
             mov r1, r0
             ldr r0, address_of_result
