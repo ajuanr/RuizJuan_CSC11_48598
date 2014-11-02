@@ -11,15 +11,21 @@ usrAray: .skip 12
 prompt: .asciz "Enter a number between 0-7\n"
 
 /* scan format */
-format: .asciz "%d"
+.balign 4
+format: .asciz "%d %d %d"
 
 /* To check values in array */
 numRead: .asciz "%d\n"
 
 /* Read in a number */
+.balign 4
+num1: .word 0
 
-/* Message to user */
-message: .asciz "This step is working\n"
+.balign 4
+num2: .word 0
+
+.balign 4
+num3: .word 0
 
 .text
 /* Generate a random number */
@@ -57,41 +63,56 @@ fill:
 
 /* Get player guess */
 read:
-    push {r4,lr}
-    ldr r2, address_of_usrAray
-    mov r4, #0   
-    readLoop:
-        cmp r4, #3
-        beq exit_read
-        ldr r0, address_of_prompt
-        bl printf
-        ldr r0, address_of_format
-        push {r1}
-        bl scanf
-        ldr r1, [sp]                /* r1 holds number read */
-        str r1, [r2, r4, lsl #2]
-        pop {r1}
-        add r4, r4, #1 
-    exit_read:
-        pop {r4, lr}
-        bx lr
+    push {lr}
+    ldr r0, address_of_prompt
+    bl printf
 
+    ldr r0, address_of_format
+    ldr r1, address_of_num1
+    ldr r2, address_of_num2
+    ldr r3, address_of_num3
+    bl scanf
+
+    pop {lr}
+    bx lr
 /* end read */
 
 /* print the array elements */
-print:
-  push {lr}
-  ldr r1, address_of_a
-  mov r2, #0
-  printLoop:
-     cmp r2, #3
-     beq exit_print
-     add r2, r2, #1
-     bal printLoop
+game:
+     push {r4,lr}
+     mov r4, #3     /* max possible right/wrong */
+     mov r0, #0     /* holds number correct */
+     mov r1, #0     /* holds number incorrect */
+     guess:
+        ldr r2, address_of_num1
+        ldr r3, address_of_a
+        ldr r3, [r3, +#0]
+        cmp r2, r3
+        beq guess2               /* numbers matched don't add to wrong guess */
+        add r1, r1, #1           /* numbers not equal*/
+
+        guess2:
+        ldr r2, address_of_num2
+        ldr r3, address_of_a
+        ldr r3, [r3, +#4]
+        beq guess3
+        add r1, r1, #1
+
+        guess3:
+        ldr r2, address_of_num3
+        ldr r3, address_of_a
+        ldr r3, [r3, +#8]
+        beq result
+        add r1, r1, #1
+        result:  
+            sub r0, r4, r1         /* r0 now holds number of correct guesses */ 
+            cmp r0, #3         
+            blt guess
+
 
   /* exit print function */
   exit_print:
-       pop {lr}
+       pop {r4, lr}
        bx lr
 
 .global main
@@ -105,7 +126,7 @@ main:
 
     bl fill
     bl read
-@    bl print
+    bl game
    
     ldr r0, address_of_numRead
     ldr r1, address_of_a
@@ -126,10 +147,12 @@ main:
 
 address_of_a: .word a
 address_of_usrAray: .word usrAray
-address_of_message: .word message
 address_of_numRead: .word numRead
 address_of_prompt: .word prompt
 address_of_format: .word format
+address_of_num1: .word num1
+address_of_num2: .word num2
+address_of_num3: .word num3
 
 /* External functions */
 .global printf
