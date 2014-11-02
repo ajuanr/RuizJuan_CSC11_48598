@@ -36,7 +36,6 @@ message: .asciz "array contains 3 elements\n"
    print:
      push {lr}
      mov r2, #0
-     mov r1, r2
      printLoop:
          cmp r2, #3
          beq exit_print

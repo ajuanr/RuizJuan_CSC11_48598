@@ -13,10 +13,6 @@ message: .asciz "This step is working\n"
 /* Generate a random number */
 random:
     push {lr}                 /* Push lr onto the top of the stack */
-
-    mov r0,#0                    /* Set time(0) */
-    bl time                      /* Call time */
-    bl srand                     /* Call srand */
     bl rand                      /* Call rand */
 
     mov r1,r0,ASR #1             /* In case random return is negative */
@@ -24,7 +20,6 @@ random:
 	                         /* We want rand()%8 */
     bl divMod                    /* Call divMod function to get remainder */
 
-	
     pop {lr}                     /* Pop the top of the stack and put it in lr */
     bx lr                        /* Leave main */
 /* Exit random number generator */
@@ -33,14 +28,13 @@ random:
 fill:
     push {r4,lr}
     /* Save the array */
-    mov r4, #0
+    mov r4, #0                       /* r4 holds the index */
     fillLoop:
         cmp r4, #3                   /* have we reached 3 yet */
         beq exit_fill
         bl random
         ldr r2, address_of_a         /* r0 <- master */
-        
-        str r1, [r2, r3, lsl #2]     /* (*r1  ← r2) + #4 */
+        str r1, [r2, r4, lsl #2]     /* (*r1  ← r2) + #4 */
         add r4, r4, #1
         bal fillLoop
    
@@ -56,9 +50,8 @@ print:
   ldr r1, address_of_a
   mov r2, #0
   printLoop:
-     cmp r3, #3
+     cmp r2, #3
      beq exit_print
-     ldr r1, [r1, r2, lsl #2]
      add r2, r2, #1
      bal printLoop
 
@@ -71,15 +64,26 @@ print:
 main:
    /* Save the link registers */
    push {lr}
-
     /* for random number */
+    mov r0,#0                    /* Set time(0) */
+    bl time                      /* Call time */
+    bl srand                     /* Call srand */
 
     bl fill
-    bl print
+@    bl print
    
     ldr r0, address_of_numRead
     ldr r1, address_of_a
     ldr r1, [r1, +#0]
+    bl printf
+
+    ldr r0, address_of_numRead
+    ldr r1, address_of_a
+    ldr r1, [r1, +#4]
+    bl printf
+    ldr r0, address_of_numRead
+    ldr r1, address_of_a
+    ldr r1, [r1, +#8]
     bl printf
 
     pop {lr} 
