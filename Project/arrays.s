@@ -3,8 +3,20 @@
 .balign 4
 a: .skip 12
 
+/* Array holding the numbers entered by user */
+.balign 4
+usrAray: .skip 12
+
+/* Prompt */
+prompt: .asciz "Enter a number between 0-7\n"
+
+/* scan format */
+format: .asciz "%d"
+
 /* To check values in array */
 numRead: .asciz "%d\n"
+
+/* Read in a number */
 
 /* Message to user */
 message: .asciz "This step is working\n"
@@ -43,6 +55,28 @@ fill:
       pop {r4, lr}
       bx lr
 
+/* Get player guess */
+read:
+    push {r4,lr}
+    ldr r2, address_of_usrAray
+    mov r4, #0   
+    readLoop:
+        cmp r4, #3
+        beq exit_read
+        ldr r0, address_of_prompt
+        bl printf
+        ldr r0, address_of_format
+        push {r1}
+        bl scanf
+        ldr r1, [sp]                /* r1 holds number read */
+        str r1, [r2, r4, lsl #2]
+        pop {r1}
+        add r4, r4, #1 
+    exit_read:
+        pop {r4, lr}
+        bx lr
+
+/* end read */
 
 /* print the array elements */
 print:
@@ -70,6 +104,7 @@ main:
     bl srand                     /* Call srand */
 
     bl fill
+    bl read
 @    bl print
    
     ldr r0, address_of_numRead
@@ -90,11 +125,15 @@ main:
     bx lr
 
 address_of_a: .word a
+address_of_usrAray: .word usrAray
 address_of_message: .word message
 address_of_numRead: .word numRead
+address_of_prompt: .word prompt
+address_of_format: .word format
 
 /* External functions */
 .global printf
+.global scanf
 .global time
 .global srand
 .global rand
