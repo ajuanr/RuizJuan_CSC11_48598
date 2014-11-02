@@ -7,7 +7,7 @@ a: .skip 12
 numRead: .asciz "%d, "
 
 /* Message to user */
-message: .asciz "array contains 3 elements\n"
+message: .asciz "This step is working\n"
 
 .text
 
@@ -17,44 +17,48 @@ message: .asciz "array contains 3 elements\n"
        /* Save the array */
        ldr r1, address_of_a         /* r1 <- master */
        mov r2, #0
-         ldr r0, address_of_message
    fillLoop:
        cmp r2, #3                   /* have we reached 3 yet */
        beq exit_fill
        add r2, r2, #1
        str r2, [r1, r2, lsl #2]     /* (*r1  ← r2) + #4 */
-         bl printf
        bal fillLoop
    
        /* Exit the function */    
-       exit_fill:
-         pop {lr}
-         bx lr
+   exit_fill:
+      pop {lr}
+      bx lr
 
 
    /* print the array elements */
    print:
      push {lr}
-     mov r2, #0
-     mov r1, r2
+     ldr r2, address_of_a
+     mov r3, #0
      printLoop:
-         cmp r2, #3
-         beq exit_print
-         add r2, r2, #1
-         bal printLoop
-    /* exit print function */
-    exit_print:
-    pop {lr}
-    bx lr
+        cmp r3, #3
+        beq exit_print
+        ldr r1, [r2, r3, lsl #2]
+        add r3, r3, #1
+        bal printLoop
+
+   /* exit print function */
+   exit_print:
+       pop {lr}
+       bx lr
 
     .global main
 main:
    /* Save the link registers */
    push {lr}
 
-
    bl fill
-   @bl print
+   bl print
+   
+   ldr r0, address_of_numRead
+   ldr r1, address_of_a
+   ldr r1, [r1, +#8]
+   bl printf
 
    pop {lr} 
    bx lr
