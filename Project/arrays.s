@@ -10,6 +10,9 @@ usrAray: .skip 12
 /* Prompt */
 prompt: .asciz "Enter a number between 0-7\n"
 
+/* Result of guess */
+result: .asciz "You got %d correct and %d wrong\n"
+
 /* scan format */
 .balign 4
 format: .asciz "%d %d %d"
@@ -81,9 +84,10 @@ read:
 game:
      push {r4,lr}
      mov r4, #3     /* max possible right/wrong */
+     guess:
      mov r0, #0     /* holds number correct */
      mov r1, #0     /* holds number incorrect */
-     guess:
+        bl read                  /* get user guess */
         ldr r2, address_of_num1
         ldr r3, address_of_a
         ldr r3, [r3, +#0]
@@ -102,11 +106,16 @@ game:
         ldr r2, address_of_num3
         ldr r3, address_of_a
         ldr r3, [r3, +#8]
-        beq result
+        beq done
         add r1, r1, #1
-        result:  
+        done:  
             sub r0, r4, r1         /* r0 now holds number of correct guesses */ 
             cmp r0, #3         
+            /* Right/wrong in r0/r1 */
+            mov r2, r1
+            mov r1, r0
+            ldr r0, address_of_result
+            bl printf       
             blt guess
 
 
@@ -125,7 +134,6 @@ main:
     bl srand                     /* Call srand */
 
     bl fill
-    bl read
     bl game
    
     ldr r0, address_of_numRead
@@ -153,6 +161,7 @@ address_of_format: .word format
 address_of_num1: .word num1
 address_of_num2: .word num2
 address_of_num3: .word num3
+address_of_result: .word result
 
 /* External functions */
 .global printf
