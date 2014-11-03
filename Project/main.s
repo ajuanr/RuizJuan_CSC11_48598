@@ -3,10 +3,6 @@
 .balign 4
 master: .skip 12
 
-/* 3-digit array holding the numbers that the user guessed */
-.balign 4
-guess: .skip 12
-
 /* Instructions to user */
 .balign 4
 instruct: .asciz "Enter three digits in the correct order to win\n"
@@ -35,6 +31,9 @@ main:
     sub sp, #4      /* 8-byte align sp */
     ldr r0, address_of_instruct
     bl printf
+
+    bl fill
+    bl game
 
     add sp, #4    /* remove padding */ 
     pop {lr}
