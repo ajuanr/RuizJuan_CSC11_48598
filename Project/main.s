@@ -32,6 +32,11 @@ main:
     ldr r0, address_of_instruct
     bl printf
 
+    /* for random number */
+    mov r0,#0                    /* Set time(0) */
+    bl time                      /* Call time */
+    bl srand                     /* Call srand */
+
     bl fill
     bl game
 

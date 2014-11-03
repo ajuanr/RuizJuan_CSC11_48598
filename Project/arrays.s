@@ -46,6 +46,7 @@ random:
 /* Exit random number generator */
 
 /* fill the array */
+.global fill
 fill:
     push {r4,lr}
     /* Save the array */
@@ -81,6 +82,7 @@ read:
 /* end read */
 
 /* Guess the number */
+.global game
 game:
      push {r4,lr}
      mov r4, #3     /* max possible right/wrong */
@@ -131,12 +133,12 @@ game:
   exit_print:
        pop {r4, lr}
        bx lr
-
+/*
 .global main
 main:
-   /* Save the link registers */
+   /* Save the link registers 
    push {lr}
-    /* for random number */
+    /* for random number 
     mov r0,#0                    /* Set time(0) */
     bl time                      /* Call time */
     bl srand                     /* Call srand */
@@ -157,10 +159,9 @@ main:
     ldr r1, address_of_a
     ldr r1, [r1, +#8]
     bl printf
-*/
     pop {lr} 
     bx lr
-
+*/
 address_of_a: .word a
 address_of_usrAray: .word usrAray
 address_of_numRead: .word numRead
