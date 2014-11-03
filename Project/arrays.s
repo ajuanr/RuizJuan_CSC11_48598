@@ -121,18 +121,18 @@ game:
         done:                      /* Player has entered all numbers */
             sub r0, r4, r1         /* r0 now holds number of correct guesses */ 
                                    /* Right/wrong in r0/r1, put in r1, r2 for printing */
-            cmp r1, #0
             mov r2, r1
             mov r1, r0
 
             ldr r0, address_of_result
             bl printf       
-            bgt guess
+            cmp r1, r3
+            beq guess
 
-  /* exit guess function */
-  exit_print:
-       pop {r4, lr}
-       bx lr
+/* exit guess function */
+exit_print:
+    pop {r4, lr}
+    bx lr
 
 address_of_a: .word a
 address_of_usrAray: .word usrAray
