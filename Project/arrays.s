@@ -119,12 +119,13 @@ game:
         done:                      /* Player has entered all numbers */
             sub r0, r4, r1         /* r0 now holds number of correct guesses */ 
                                    /* Right/wrong in r0/r1, put in r1, r2 for printing */
+            cmp r1, #0
             mov r2, r1
             mov r1, r0
+
             ldr r0, address_of_result
             bl printf       
-            cmp r1, #3             /* if r0==3 then all guesses were correct */ 
-            blt guess
+            bgt guess
 
   /* exit guess function */
   exit_print:
@@ -142,7 +143,7 @@ main:
 
     bl fill
     bl game
-   
+/*   
     ldr r0, address_of_numRead
     ldr r1, address_of_a
     ldr r1, [r1, +#0]
@@ -156,7 +157,7 @@ main:
     ldr r1, address_of_a
     ldr r1, [r1, +#8]
     bl printf
-
+*/
     pop {lr} 
     bx lr
 
