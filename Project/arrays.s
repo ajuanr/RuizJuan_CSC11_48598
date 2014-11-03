@@ -133,35 +133,7 @@ game:
   exit_print:
        pop {r4, lr}
        bx lr
-/*
-.global main
-main:
-   /* Save the link registers 
-   push {lr}
-    /* for random number 
-    mov r0,#0                    /* Set time(0) */
-    bl time                      /* Call time */
-    bl srand                     /* Call srand */
 
-    bl fill
-    bl game
-/*   
-    ldr r0, address_of_numRead
-    ldr r1, address_of_a
-    ldr r1, [r1, +#0]
-    bl printf
-
-    ldr r0, address_of_numRead
-    ldr r1, address_of_a
-    ldr r1, [r1, +#4]
-    bl printf
-    ldr r0, address_of_numRead
-    ldr r1, address_of_a
-    ldr r1, [r1, +#8]
-    bl printf
-    pop {lr} 
-    bx lr
-*/
 address_of_a: .word a
 address_of_usrAray: .word usrAray
 address_of_numRead: .word numRead

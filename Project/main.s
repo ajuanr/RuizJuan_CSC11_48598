@@ -1,3 +1,10 @@
+/* 
+ *    To compile:
+ *        gcc -c divmod.s
+ *        gcc -c arrays.s
+ *        gcc -c main.s
+ *        gcc divMod.o arrays.o main.o -o proj1     
+ */
 .data
 /* 3-digit array holding the numbers user must guess */
 .balign 4
