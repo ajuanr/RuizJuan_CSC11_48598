@@ -11,7 +11,7 @@ usrAray: .skip 12
 prompt: .asciz "Enter three numbers between 0-7\n"
 
 /* Result of guess */
-result: .asciz "You got %d in the correct spot and %d in the wrong spot\n"
+result: .asciz "You got %d in the correct spot and %d incorrect\n"
 
 /* scan format */
 .balign 4
