@@ -80,7 +80,7 @@ read:
     bx lr
 /* end read */
 
-/* print the array elements */
+/* Guess the number */
 game:
      push {r4,lr}
      mov r4, #3     /* max possible right/wrong */
@@ -95,8 +95,8 @@ game:
         ldr r3, address_of_a
         ldr r3, [r3, +#0]
         cmp r2, r3               /* does player guess match value in array */
-        beq guess2               /* numbers matched don't add to wrong guess */
-        add r1, r1, #1           /* numbers not equal*/
+        beq guess2               /* numbers matched don't add to incorrect */
+        add r1, r1, #1           /* guess incorrect, add to incorrect count*/
 
         guess2:
             ldr r2, address_of_num2
@@ -116,18 +116,17 @@ game:
             beq done
             add r1, r1, #1
 
-        done:                      /* Player has entered numbers */
+        done:                      /* Player has entered all numbers */
             sub r0, r4, r1         /* r0 now holds number of correct guesses */ 
-            cmp r0, #3             /* if r0==3 then all guesses were correct */ 
                                    /* Right/wrong in r0/r1, put in r1, r2 for printing */
             mov r2, r1
             mov r1, r0
             ldr r0, address_of_result
             bl printf       
+            cmp r1, #3             /* if r0==3 then all guesses were correct */ 
             blt guess
 
-
-  /* exit print function */
+  /* exit guess function */
   exit_print:
        pop {r4, lr}
        bx lr
