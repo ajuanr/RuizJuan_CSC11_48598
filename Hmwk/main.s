@@ -11,24 +11,35 @@ end: .word 0
 message: .asciz "The collatz function took %d seconds to run\n"
 
 .text
+    .global main
+main:
     push {lr}
 
     /* Get initial time */
-    ldr r0, ad_of_beg
+    mov r0, #0
     bl time
+    mov r1, r0
+    ldr r0, ad_of_message
+    bl printf
 
     /* call collatz function */
-    bl collatz
+    mov r0, #1
+    mov r3, #0
+    loop:
+        cmp r3, #100
+        addne r3, r3, #1
+        bl collatz
+        bne loop
 
     /* Get final time */
-    ldr r0, ad_of_end
     bl time
+    mov r1, r0
+    ldr r0, ad_of_message
+    bl printf
 
     /* print message to user */
     ldr r0, ad_of_message
-    ldr r1, ad_of_beg
-    ldr r2, ad_of_end
-    sub r1, r2, r1
+    sub r1, r2, r1   /* r1 <- r2- r1 */
     bl printf
 
     pop {lr}
