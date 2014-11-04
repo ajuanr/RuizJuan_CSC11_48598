@@ -18,29 +18,41 @@ main:
     /* Get initial time */
     mov r0, #0
     bl time
-    mov r1, r0
-    ldr r0, ad_of_message
-    bl printf
 
     /* call collatz function */
     mov r0, #1
     mov r3, #0
+    mov r4, #100
+    add r4, r4, r4, lsl #10
     loop:
-        cmp r3, #100
-        addne r3, r3, #1
+        mov r0, #100
+        cmp r3, r4
         bl collatz
+        addne r3, r3, #1
         bne loop
 
-    /* Get final time */
-    bl time
-    mov r1, r0
+    done:
+    mov r1, r4
     ldr r0, ad_of_message
     bl printf
+ 
+    mov r1, r2
+    @bl time
+    ldr r0, ad_of_message
+    bl printf
+
+    /* Get final time */
+    mov r0, #0
+    @bl time
+    mov r1, r0
+
 
     /* print message to user */
     ldr r0, ad_of_message
+    @bl printf
+    ldr r2, ad_of_beg
+    ldr r2, [r2]
     sub r1, r2, r1   /* r1 <- r2- r1 */
-    bl printf
 
     pop {lr}
     bx lr
