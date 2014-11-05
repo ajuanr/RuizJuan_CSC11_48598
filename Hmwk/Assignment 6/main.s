@@ -10,56 +10,74 @@ end: .word 0
 /* Tell user how long function took */
 message: .asciz "The collatz function took %d seconds to run\n"
 
+/* Tell user time at function call */
+cur_time: .asciz "The current time is: %d\n"
+
 .text
     .global main
 main:
     push {lr}
 
+
     /* Get initial time */
     mov r0, #0
     bl time
+    mov r1, r0
+    mov r2, r0
+    ldr r0, ad_of_cur_time
+    bl printf
 
-    /* call collatz function */
+    /* Call collatz function */
     mov r0, #1
-    mov r3, #0
-    mov r4, #100
-    add r4, r4, r4, lsl #10
-    loop:
-        mov r0, #100
-        cmp r3, r4
-        bl collatz
-        addne r3, r3, #1
-        bne loop
+    add r0, r0, lsl #29
+    bl collatz
 
-    done:
-    mov r1, r4
+    mov r1, r0
     ldr r0, ad_of_message
     bl printf
- 
-    mov r1, r2
-    @bl time
-    ldr r0, ad_of_message
-    bl printf
+
 
     /* Get final time */
     mov r0, #0
-    @bl time
+    bl time
     mov r1, r0
+    ldr r0, ad_of_cur_time
+    bl printf
 
+/*
 
-    /* print message to user */
+    /* call collatz function 
+    mov r0, #1
+    mov r5, #0
+    mov r4, #1
+    add r4, r4, r4, lsl #30  /* r4 <- 2^20 
+    loop:
+        mov r0, #100
+        cmp r5, r4
+@        bl collatz
+        addne r5, r5, #1
+        bne loop
+
+    /* Get final time 
+    mov r0, #0
+    bl time
+    mov r1, r0
     ldr r0, ad_of_message
-    @bl printf
-    ldr r2, ad_of_beg
-    ldr r2, [r2]
-    sub r1, r2, r1   /* r1 <- r2- r1 */
+    bl printf
 
+
+    /* print message to user 
+    sub r1, r2, r1
+    ldr r0, ad_of_message
+    bl printf
+*/
     pop {lr}
     bx lr
      
 ad_of_message: .word message
 ad_of_beg: .word beg
 ad_of_end: .word end
+ad_of_cur_time: .word cur_time
 
 .global printf
 .global time
