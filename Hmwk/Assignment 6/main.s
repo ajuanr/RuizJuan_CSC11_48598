@@ -1,3 +1,10 @@
+/*
+ *     To compile:
+ *           gcc -c collatz.s
+ *           gcc -c main.s
+ *           gcc collatz.o main.o -o coll
+ *
+ */
 .data
 /* Holds the time before running collatz */
 .balign 4
