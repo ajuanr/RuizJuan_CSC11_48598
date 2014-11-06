@@ -10,11 +10,15 @@ end: .word 0
 /* variable for collatz function */
 colVar: .word 0
 
-/* Tell user how long function took */
-message: .asciz "Collatz function\n"
+/* scan format */
+format: .asciz "%d"
 
-/* Tell user time at function call */
-cur_time: .asciz "The current time is: %d\n"
+/* prompt */
+prompt: .asciz "Enter a number for collatz function: "
+
+/* Tell user what function they are in*/
+message1: .asciz "In unpredicated collatz function\n"
+message2: .asciz "In predicated collatz function"
 
 /* Display delta time */
 delta: .asciz "Delta: %d\n"
@@ -23,8 +27,6 @@ delta: .asciz "Delta: %d\n"
 main:
     push {lr}
 
-    ldr r0, ad_of_message
-    bl printf
 
         /* Get initial time */
     mov r0, #0
@@ -32,21 +34,30 @@ main:
     ldr r1, ad_of_beg
     str r0, [r1]
     ldr r1, [r1]
-    ldr r0, ad_of_curTime
+
+         /* Get initial value for both collatz functions */
+    ldr r0, ad_of_prompt
+    bl printf
+    ldr r0, ad_of_format
+    ldr r1, ad_of_colVar
+    bl scanf
+
+
+         /* tell user what function is running */
+    ldr r0, ad_of_message1
     bl printf
 
+    ldr r0, ad_of_colVar
+    ldr r0, [r0]
          /* Call collatz function */
-    mov r0, #1000
     bl collatz
 
         /* Get final time */
     mov r0, #0
     bl time
-    ldr r1, ad_of_end
-    str r0, [r1]
-    ldr r1, [r1]
-    ldr r0, ad_of_curTime
-    bl printf
+    ldr r2, ad_of_end
+    str r0, [r2]
+    ldr r2, [r2]
 
         /* get delta time */
     ldr r1, ad_of_beg
@@ -57,8 +68,6 @@ main:
     ldr r0, ad_of_delta
     bl printf
 
-    ldr r0, ad_of_message
-    bl printf
 
         /* Get initial time */
     mov r0, #0
@@ -66,20 +75,21 @@ main:
     ldr r1, ad_of_beg
     str r0, [r1]
     ldr r1, [r1]
-    ldr r0, ad_of_curTime
+
+         /* tell user what function is running */
+    ldr r0, ad_of_message1
     bl printf
 
         /* Call collatz function */
-    mov r0, #1000
+    ldr r0, ad_of_colVar
+    ldr r0, [r0]
     bl collatz2
 
         /* Get final time */
     mov r0, #0
     bl time
-    ldr r1, ad_of_end
-    mov r1, r0
-    ldr r0, ad_of_curTime
-    bl printf
+    ldr r2, ad_of_end
+    str r0, [r2]
 
         /* get delta time */
     ldr r1, ad_of_beg
@@ -93,13 +103,14 @@ main:
     pop {lr}
     bx lr
 
-ad_of_message: .word message
+ad_of_message1: .word message1
+ad_of_message2: .word message2
 ad_of_beg: .word beg
 ad_of_end: .word end
-ad_of_curTime: .word cur_time
 ad_of_colVar: .word colVar
 ad_of_delta: .word delta
+ad_of_prompt: .word prompt
+ad_of_format: .word format
 
 .global printf
 .global time
-    ldr r0, ad_of_delta
