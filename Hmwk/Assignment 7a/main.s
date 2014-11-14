@@ -26,17 +26,17 @@ main:
     bl scanf
 
     /* Perform the conversion */
-    ldr r0, [sp]
-    sub r0, r0, #32    /* r0 = (F-32) */
-    mov r1, #5      /* temp value in order to multiply r0 by 5 */
-    mul r0, r1, r0     /* r0 = (F-32) * 5 */
-    mov r1, #9
+    ldr r1, [sp]
+    sub r1, r1, #32    /* r0 = (F-32) */
+    mov r2, #5      /* temp value in order to multiply r0 by 5 */
+    mul r1, r2, r1     /* r0 = (F-32) * 5 */
+    mov r2, #9
     bl divMod
 
 @    mov r2, r1
-    mov r1, #7
+    mov r1, r0
 
-    /* Print the result
+    /* Print the result */
     ldr r0, ad_of_result 
     bl printf
 
