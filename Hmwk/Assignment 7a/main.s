@@ -8,14 +8,13 @@
 
 
 .data
-prompt: .asciz "Enter temperature in degrees Farenheit: "
+prompt: .asciz "Enter temperature from 32-212 in degrees Farenheit: "
 format: .asciz "%d"
-result: .asciz "Temp is %d\n"
+result: .asciz "Temp is %d"
+result2: .asciz ".%d\n"       /* used this because of error I was getting*/
 
-.text
-.global main
-main:
-    push {lr}      /* save the link register */
+convert:
+    push {lr}
 
     ldr r0, ad_of_prompt
     bl printf
@@ -33,19 +32,36 @@ main:
     mov r2, #9
     bl divMod
 
-@    mov r2, r1
-    mov r1, r0
-
-    /* Print the result */
-    ldr r0, ad_of_result 
-    bl printf
-
-    /* exit */
     add sp, sp, #4
     pop {lr}
     bx lr
 
-
 ad_of_prompt: .word prompt
 ad_of_format: .word format
+
+.text
+.global main
+main:
+    push {lr}      /* save the link register */
+
+    
+    bl convert
+
+    /* after conversion r0 holds integer part
+                        r1 holds decimal part */
+    mov r4, r1
+    mov r1, r0
+    /* Print the result */
+    ldr r0, ad_of_result 
+    bl printf
+
+    ldr r0, ad_of_result2
+    mov r1, r4
+    bl printf
+
+    /* exit */
+    pop {lr}
+    bx lr
+
 ad_of_result: .word result
+ad_of_result2: .word result2
