@@ -9,6 +9,7 @@ format: .asciz "%d"
 result: .asciz "Temp is %d"
 result2: .asciz ".%d\n"       /* used this because of error I was getting*/
 
+fiveNine: .word 0
 
 .global main
 main:
@@ -18,17 +19,24 @@ main:
     bl printf
 
     ldr r0, ad_of_format
-    push {r1}             /* push r1 onto stack before scanf */
+    sub sp, sp, #4
+    mov r1, sp
     bl scanf
 
-    ldr r0, ad_of_result
+    ldr r2, ad_of_fiveNine
+    mov r2, #0x8E38F
+
     ldr r1, [sp]
-    ldr r1, [r1]
+    sub r1, r1, #32        /* (F-32) */
+
+    ldr r0, ad_of_result
     bl printf
 
 
     pop {r1, lr}
     bx lr
 
+ad_of_prompt: .word prompt
 ad_of_result: .word result
 ad_of_format: .word format
+ad_of_fiveNine: .word fiveNine
