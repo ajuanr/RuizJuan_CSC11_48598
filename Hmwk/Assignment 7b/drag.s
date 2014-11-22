@@ -11,19 +11,14 @@ main:
     push {lr}
     //Test the 2 functions
     @unsigned int nLoops=1000000000;
-    //Integer Function and Variables
-    mov r1, #0 
-    mov r2, #0
-    mov r3, #0
 
-    /* Constants */
-    mov r4, #1     // 1 bit,  >>1
-    ldr r5, =0x9B5  //12 bits, >>20
-    mov r6, #200    // 8 bits
-    ldr r7, =0x3243F7//24 bits, >>20
-    mov r8, #6      // 4 bits
-    ldr r9, =0x1C7 //12 bits, >>16
-    ldr r10, =0x666   //12 bits, >>12
+    mov r4, #1               /* unsigned int iHalf=1;      // 1 bit,  >>1 */
+    ldr r5, =0x9B5           /* unsigned int iRho=0x9B5;   //12 bits, >>20 */
+    mov r6, #200             /* unsigned int iVel=200;     // 8 bits */
+    ldr r7, =0x3243F7        /* unsigned int iPi=0x3243F7; //24 bits, >>20 */
+    mov r8, #6               /* unsigned int iRad=6;       // 4 bits */
+    ldr r9, =0x1C7           /* unsigned int iConv=0x1C7;  //12 bits, >>16 */
+    ldr r10, =0x666          /* unsigned int iCd=0x666;    //12 bits, >>12 */
     //Time for the integer function
     @begTime=time(0);
 
@@ -44,11 +39,8 @@ main:
         mul r3, r10, r3       /* iDrag*=iCd;   //xBit 32  BP-17 */
     @endTime=time(0);
 
-    mov r3, r2
-    mov r2, r1 
-    mov r1, r0, lsr#9
-   
     ldr r0, ad_of_result
+    mov r1, r1, lsr#9
     bl printf
 
     ldr r0, ad_of_cross
@@ -56,7 +48,7 @@ main:
     bl printf
 
     ldr r0, ad_of_iDrag
-    mov r1, r3 @, lsr#12
+    mov r1, r3, lsr#12
     bl printf
 
     pop {lr}
