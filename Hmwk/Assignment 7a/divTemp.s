@@ -13,9 +13,6 @@ format: .asciz "%d"
 result: .asciz "Temp is %d"
 result2: .asciz ".%d\n"       /* used this because of error I was getting*/
 
-begTime: .word 0
-endTime: .word 0
-
 convert:
     push {lr}
 
@@ -39,15 +36,12 @@ convert:
     pop {lr}
     bx lr
 
-ad_of_prompt: .word prompt
-ad_of_format: .word format
 
 .text
 .global main
 main:
     push {lr}      /* save the link register */
 
-   
     
     bl convert
 
@@ -69,5 +63,3 @@ main:
 
 ad_of_result: .word result
 ad_of_result2: .word result2
-ad_of_begTime: .word begTime
-ad_of_endTime: .word endTime

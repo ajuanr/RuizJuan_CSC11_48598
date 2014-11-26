@@ -10,54 +10,62 @@
 .data
 prompt: .asciz "Enter temperature from 32-212 in degrees Farenheit: "
 format: .asciz "%d"
-result: .asciz "Temp is %d"
+result: .asciz "Temp is %d\n"
 result2: .asciz ".%d\n"       /* used this because of error I was getting*/
+delta: .asciz "The delta is %d\n" 
 
-convert:
-    push {lr}
-
-    ldr r0, ad_of_prompt
-    bl printf
-
-    sub sp, sp, #4     /* make room on stack for read */
-    mov r1, sp         /* move  r1 onto stack before read */
-    ldr r0, ad_of_format
-    bl scanf
-
-    /* Perform the conversion */
-    ldr r1, [sp]
-    sub r1, r1, #32    /* r0 = (F-32) */
-    mov r2, #5      /* temp value in order to multiply r0 by 5 */
-    mul r1, r2, r1     /* r0 = (F-32) * 5 */
-    mov r2, #9
-    bl divMod
-
-    add sp, sp, #4
-    pop {lr}
-    bx lr
-
-ad_of_prompt: .word prompt
-ad_of_format: .word format
+begTime: .word 0
+endTime: .word 0
 
 .text
 .global main
 main:
     push {lr}      /* save the link register */
-
     
-    bl convert
+    /* get initial time */
+    mov r0, #0
+    bl time
+    ldr r4, ad_of_begTime
+    str r0, [r4]
 
-    /* after conversion r0 holds integer part
-                        r1 holds decimal part */
-    mov r4, r1
-    mov r1, r0
-    /* Print the result */
+    ldr r5, =100000000
+    for:
+        cmp r5, #0
+        beq exit
+        /* Perform the conversion */
+        mov r1, #212
+        sub r1, r1, #32    /* r0 = (F-32) */
+        mov r2, #5      /* temp value in order to multiply r0 by 5 */
+        mul r1, r2, r1     /* r0 = (F-32) * 5 */
+        mov r2, #9
+        bl divMod
+        sub r5, r5, #1
+        b for
+
+    exit:
+    mov r6, r0       /* Save result from conversion
+    /* get final time */
+    mov r0, #0
+    bl time
+    ldr r4, ad_of_endTime
+    str r0, [r4]
+
+    mov r1, r6
     ldr r0, ad_of_result 
     bl printf
 
-    ldr r0, ad_of_result2
-    mov r1, r4
-    bl printf
+    @ldr r0, ad_of_result2
+    @mov r1, r4
+    @bl printf
+
+       /* get delta time */
+    ldr r1, ad_of_begTime
+    ldr r1, [r1]
+    ldr r2, ad_of_endTime
+    ldr r2, [r2]
+    sub r1, r2, r1
+    ldr r0, ad_of_delta
+    bl printf 
 
     /* exit */
     pop {lr}
@@ -65,3 +73,6 @@ main:
 
 ad_of_result: .word result
 ad_of_result2: .word result2
+ad_of_begTime: .word begTime
+ad_of_endTime: .word endTime
+ad_of_delta: .word delta
