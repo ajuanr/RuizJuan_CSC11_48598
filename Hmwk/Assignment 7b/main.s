@@ -2,36 +2,52 @@
  * gcc -o main main.s
  */
 .data
-prompt: .asciz "Enter temperature from 32-212 in degrees Farenheit: "
-format: .asciz "%d"
 result: .asciz "Temp is %d\n"
+beg: .word 0
+end: .word 0
+delta: .asciz "Delta: %d\n"
 
 .global main
 main:
     push {lr}
-
-    ldr r0, ad_of_prompt
-    bl printf
-
-    ldr r0, ad_of_format
-    sub sp, sp, #4
-    mov r1, sp
-    bl scanf
-
     ldr r2, =0x8E38F       /* 20 bits    >>20 */
 
-    ldr r1, [sp]
+    /* Get initial time */
+    mov r0, #0
+    bl time
+    ldr r1, ad_of_beg
+    str r0, [r1]
+    ldr r1, [r1]
+
+    /* Convert */
+    mov r1, #212
     sub r1, r1, #32        /* r1 = (Temp-32) */
     mul r1, r2, r1          /* r1 = r1 * (5/9)<<20 */ 
     mov r1, r1, lsr#20    /* r1 >> 20 */ 
-   
+
+   /* Get final time */
+    mov r0, #0
+    bl time
+    ldr r2, ad_of_end
+    str r0, [r2]
+
     ldr r0, ad_of_result
     bl printf
 
-    add sp, sp, #4
+
+        /* get delta time */
+    ldr r1, ad_of_beg
+    ldr r1, [r1]
+    ldr r2, ad_of_end
+    ldr r2, [r2]
+    sub r1, r2, r1
+    ldr r0, ad_of_delta
+    bl printf
+   
+
     pop {lr}
     bx lr
 
-ad_of_prompt: .word prompt
 ad_of_result: .word result
-ad_of_format: .word format
+ad_of_beg: .word beg
+ad_of_end: .word end
