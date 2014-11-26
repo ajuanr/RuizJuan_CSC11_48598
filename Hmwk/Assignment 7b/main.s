@@ -5,7 +5,7 @@
 result: .asciz "Temp is %d\n"
 beg: .word 0
 end: .word 0
-delta: .asciz "Delta: %d\n"
+delta: .asciz "Delta for integer shift is: %d\n"
 
 .global main
 main:
@@ -19,13 +19,20 @@ main:
     str r0, [r1]
     ldr r1, [r1]
 
+    ldr r5, =100000000
+    for:
+    cmp r5, #0
+    beq exit
     /* Convert */
     mov r1, #212
     sub r1, r1, #32        /* r1 = (Temp-32) */
     mul r1, r2, r1          /* r1 = r1 * (5/9)<<20 */ 
     mov r1, r1, lsr#20    /* r1 >> 20 */ 
+    sub r5, r5, #1
+    b for
 
-   /* Get final time */
+    /* Get final time */
+    exit: 
     mov r0, #0
     bl time
     ldr r2, ad_of_end
@@ -51,3 +58,4 @@ main:
 ad_of_result: .word result
 ad_of_beg: .word beg
 ad_of_end: .word end
+ad_of_delta: .word delta
