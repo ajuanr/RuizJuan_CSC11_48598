@@ -12,12 +12,11 @@ main:
     push {lr}
     ldr r2, =0x8E38F       /* 20 bits    >>20 */
 
-    /* Get initial time */
+        /* Get initial time */
     mov r0, #0
     bl time
     ldr r1, ad_of_beg
     str r0, [r1]
-    ldr r1, [r1]
 
     ldr r5, =100000000
     for:
@@ -31,16 +30,17 @@ main:
     sub r5, r5, #1
     b for
 
-    /* Get final time */
+         /* Get final time */
     exit: 
+    mov r4, r1
     mov r0, #0
     bl time
     ldr r2, ad_of_end
     str r0, [r2]
 
     ldr r0, ad_of_result
+    mov r1, r4
     bl printf
-
 
         /* get delta time */
     ldr r1, ad_of_beg
