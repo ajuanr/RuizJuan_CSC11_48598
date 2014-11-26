@@ -23,6 +23,8 @@ main:
     @begTime=time(0);
 
     @for(unsigned int i=1;i<=nLoops;i++){
+    ldr r11, =#1000000
+    for:
         mov r1, r4           /* iDynp=iHalf;  //xBit  1, BP- 1 */
         mul r1, r5, r1       /* iDynp*=iRho;  //xBit 12, BP-21 */
         mul r1, r6, r1       /* iDynp*=iVel;  //xBit 20, BP-21 */
@@ -37,6 +39,9 @@ main:
         mul r3, r1, r2       /* iDrag=iDynp*iArea;//xBit 32 BP-17 */
         mov r3, r3, lsr#12   /* iDrag>>=12;   //xBit 20  BP- 5 */
         mul r3, r10, r3       /* iDrag*=iCd;   //xBit 32  BP-17 */
+        cmp r11, #0
+        bgt for 
+        
     @endTime=time(0);
 
     ldr r0, ad_of_result
