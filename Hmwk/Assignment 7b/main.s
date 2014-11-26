@@ -18,7 +18,7 @@ main:
     ldr r1, ad_of_beg
     str r0, [r1]
 
-    ldr r5, =100000000
+    ldr r5, =1000000000
     for:
     cmp r5, #0
     beq exit

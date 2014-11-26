@@ -3,7 +3,7 @@
  *     To compile:
  *         gcc -c divmod.s
  *         gcc -c main.s
- *         gcc divmod.o main.o -o f2c
+ *         gcc divmod.o main.o -o timing
  */
 
 
