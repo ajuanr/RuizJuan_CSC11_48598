@@ -2,17 +2,13 @@
 begTime: .word 0
 endTime: .word 0
 
+result: .asciz "\nInteger Dynamic Pressure = %d lbs\nCross-Sectional Area x 32 = %d ft^2\nInteger Drag x 32 = %d lbs\n\n"
+timing: .asciz "Ran in %d seconds\n"
 
-
-iDyn: .asciz "Integer Dynamic Pressure  = %d\n"
-cross: .asciz "Cross Sectional Area x 32 = %d\n"
-iDrag: .asciz "Integer Drag x 32 = %d\n"
 .text
 .global main
 main:
     push {lr}
-    //Test the 2 functions
-    @unsigned int nLoops=1000000000;
 
     mov r4, #1               /* unsigned int iHalf=1;      // 1 bit,  >>1 */
     ldr r5, =0x9B5           /* unsigned int iRho=0x9B5;   //12 bits, >>20 */
@@ -23,9 +19,10 @@ main:
     ldr r10, =0x666          /* unsigned int iCd=0x666;    //12 bits, >>12 */
     //Time for the integer function
     @begTime=time(0);
-    ldr r11, ad_of_begTime
+    mov r0, #0
     bl time
-    str r0, [r1]
+    ldr r11, ad_of_begTime
+    str r0, [r11]
     
     @for(unsigned int i=1;i<=nLoops;i++){
     ldr r11, =100000000
@@ -50,26 +47,25 @@ main:
         b for
     exit: 
     @endTime=time(0);
-    ldr r11, ad_of_endTime
+    mov r0, #0
     bl time
-    str r0, [r1]
+    ldr r11, ad_of_endTime
+    str r0, [r11]
 
     ldr r0, ad_of_result
     mov r1, r1, lsr#9
+    mov r2, r2, lsr#3
+    mov r3, r3, lsr#12
+
     bl printf
 
-    ldr r0, ad_of_cross
     /* print time differential */
     ldr r2, ad_of_endTime
     ldr r2, [r2]
     ldr r1, ad_of_begTime
     ldr r1, [r1]
     sub r1, r2, r1
-    @mov r1, r2 @, lsr#3
-    bl printf
-
-    ldr r0, ad_of_iDrag
-    mov r1, r3, lsr#12
+    ldr r0, ad_of_timing
     bl printf
 
     pop {lr}
@@ -77,6 +73,9 @@ main:
 
 ad_of_begTime: .word begTime
 ad_of_endTime: .word endTime
-ad_of_result: .word iDyn
-ad_of_cross: .word cross
-ad_of_iDrag: .word iDrag
+ad_of_result: .word result
+ad_of_timing: .word timing
+
+.global time
+.global printf
+.global scanf
