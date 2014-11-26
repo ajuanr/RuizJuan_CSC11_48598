@@ -8,11 +8,9 @@
 
 
 .data
-prompt: .asciz "Enter temperature from 32-212 in degrees Farenheit: "
 format: .asciz "%d"
 result: .asciz "Temp is %d\n"
-result2: .asciz ".%d\n"       /* used this because of error I was getting*/
-delta: .asciz "The delta is %d\n" 
+delta: .asciz "The delta using divMod is: %d\n" 
 
 begTime: .word 0
 endTime: .word 0
@@ -43,20 +41,18 @@ main:
         b for
 
     exit:
-    mov r6, r0       /* Save result from conversion
+    mov r6, r0       /* Save result from conversion */
+
     /* get final time */
     mov r0, #0
     bl time
     ldr r4, ad_of_endTime
     str r0, [r4]
 
+    /* get converted temp for printing */
     mov r1, r6
     ldr r0, ad_of_result 
     bl printf
-
-    @ldr r0, ad_of_result2
-    @mov r1, r4
-    @bl printf
 
        /* get delta time */
     ldr r1, ad_of_begTime
@@ -72,7 +68,6 @@ main:
     bx lr
 
 ad_of_result: .word result
-ad_of_result2: .word result2
 ad_of_begTime: .word begTime
 ad_of_endTime: .word endTime
 ad_of_delta: .word delta
