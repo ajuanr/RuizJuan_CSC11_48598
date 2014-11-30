@@ -6,7 +6,8 @@
 prompt: .asciz "Enter temperature from 32-212 in degrees Farenheit: "
 format: .asciz "%f"
 result: .asciz "Temp is %f\n"
-initial: .float 
+initial: .word 0
+
 
 /* 5/9 */
 fiveNine: .float 0.555
@@ -25,27 +26,23 @@ main:
     ldr r1, ad_of_initial
     bl scanf
 
-                        /* d5 hold initial temperature read */
     ldr r1, ad_of_initial
-    vldr s14, [r1] @ad_of_initial
-
-    /*
-    mov r1, #5
-    vldr s12, [r1]
-
-    mov r1, #9
-    vldr s11, [r1]
-    */
+    vldr s14, [r1]
 
     vldr s15, ad_of_fiveNine
     vldr s16, ad_of_thrtyTwo
 
-    @vadd.f32 s14, s14, s16
+    mov r1, #5
+    mov r2, #9
+    mov r3, #32
+    vmov s17, r1
+    vmov s18, r2
+    vmov s19, r3
+
+    vadd.f32 s14, s14, s19
     @vmul.f32 s14, s14, s12
-@    vdiv.f32 s14, s14, s11
 
     vcvt.f64.f32 d5, s14    /* convert to double for printing */
-
   
     ldr r0, ad_of_result
     vmov r2, r3, d5
