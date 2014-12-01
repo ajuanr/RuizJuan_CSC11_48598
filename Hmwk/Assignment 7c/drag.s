@@ -3,7 +3,6 @@ begTime: .word 0
 endTime: .word 0
 
 result: .asciz "\nInteger Dynamic Pressure = %f lbs\nCross-Sectional Area x 32 = %f ft^2\nInteger Drag x 32 = %f lbs\n\n"
-timing: .asciz "Ran in %d seconds\n"
 testMsg: .asciz "%f\n"
 
 
@@ -22,11 +21,42 @@ main:
 
     push {lr}
     sub sp, sp, #4             /* 8-byte align the sp */
-    
-    ldr r1, =fHalf
-    vldr s14, [r1]
 
-    vcvt.f64.f32 d0, s14
+    ldr r1, =fRho
+    vldr s7, [r1]              /* s7 = fRho */
+    ldr r1, =fVel
+    vldr s8, [r1]              /* s8  = fVel */
+    ldr r1, =fRad
+    vldr s9, [r1]              /* s9 = fRad */
+    ldr r1, =fConv
+    vldr s10, [r1]             /* s10 = fConv */
+    ldr r1, =fCd
+    vldr s11, [r1]             /* s11 = fCd */
+    
+     
+    ldr r1, =fHalf
+    vldr s14, [r1]             /* s14 = fDynp = fHalf */
+    ldr r1, =fPi
+    vldr s15, [r1]             /* s15 = fArea = fPi */
+    vmov s16, s14              /* s16 = fDrag = fDynp * fArea */
+    vmul.f32 s16, s16, s15
+
+/*    vmul.f32 s14, =fRho /*   fDynp*=fRho;
+       fDynp*=fVel;
+        fDynp*=fVel;
+        fArea=fPi;
+        fArea*=fRad;
+        fArea*=fRad;
+        fArea*=fConv;
+        fDrag=fDynp*fArea;
+        fDrag*=fCd;
+        iDummy>>=16;
+        iDummy<<=13;
+        iDummy>>=12;
+        iDummy<<=15;
+        iDummy>>=12;*/
+
+    vcvt.f64.f32 d0, s16
     ldr r0, =testMsg
     vmov r2, r3, d0
     bl printf
@@ -36,9 +66,7 @@ main:
     bx lr
 
 ad_of_result: .word result
-ad_of_timing: .word timing
 ad_of_testMsg: .word testMsg
 
-.global time
 .global printf
 .global scanf
