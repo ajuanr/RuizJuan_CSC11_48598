@@ -29,9 +29,6 @@ main:
     ldr r1, ad_of_initial
     vldr s14, [r1]
 
-    vldr s15, ad_of_fiveNine
-    vldr s16, ad_of_thrtyTwo
-
     mov r1, #5
     mov r2, #9
     mov r3, #32
@@ -42,10 +39,10 @@ main:
     vadd.f32 s14, s14, s19
     @vmul.f32 s14, s14, s12
 
-    vcvt.f64.f32 d5, s14    /* convert to double for printing */
+    vcvt.f64.f32 d0, s14    /* convert to double for printing */
   
     ldr r0, ad_of_result
-    vmov r2, r3, d5
+    vmov r2, r3, d0
     bl printf
 
     pop {lr}
