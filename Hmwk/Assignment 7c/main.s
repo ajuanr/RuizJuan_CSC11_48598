@@ -8,49 +8,37 @@ format: .asciz "%f"
 result: .asciz "Temp is %f\n"
 initial: .word 0
 
-
-/* 5/9 */
-fiveNine: .float 0.555
-
 /* thrtyTwo */
-thrtyTwo: .float 32.0
+thirtyTwo: .float 32.0
 
 .global main
 main:
-    push {lr}
 
-    ldr r0, ad_of_prompt
+    ldr r0, ad_of_prompt    /* print message to user */
     bl printf
 
-    ldr r0, ad_of_format
+    ldr r0, ad_of_format    /* read in the value */
     ldr r1, ad_of_initial
     bl scanf
 
-    ldr r1, ad_of_initial
+
+    ldr r1, ad_of_initial   /* put the value in floating point register */
     vldr s14, [r1]
 
-    mov r1, #5
-    mov r2, #9
-    mov r3, #32
-    vmov s17, r1
-    vmov s18, r2
-    vmov s19, r3
 
-    vadd.f32 s14, s14, s19
-    @vmul.f32 s14, s14, s12
+    vldr s15, =thirtyTwo
+    
+    vsub.f32  s14, s14, s15
 
-    vcvt.f64.f32 d0, s14    /* convert to double for printing */
+    vcvt.f64.f32 d0, s14    /* convert to double for printing  */
   
-    ldr r0, ad_of_result
+    ldr r0, =result 
     vmov r2, r3, d0
     bl printf
 
-    pop {lr}
-    bx lr
+    mov r7, #1
+    swi 0 
 
 ad_of_prompt: .word prompt
-ad_of_result: .word result
 ad_of_format: .word format
 ad_of_initial: .word initial
-ad_of_fiveNine: .word fiveNine
-ad_of_thrtyTwo: .word thrtyTwo
