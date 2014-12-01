@@ -31,7 +31,8 @@ main:
     ldr r2, =five
     ldr r3, =nine
 
-    vldr s15, [r1]          /* Load the registers */
+    vldr s15, =32 @[r1]          /* Load the registers */
+    vcvt.f32.s32 s15, s15
     vldr s16, [r2]
     vldr s17, [r3]
 
