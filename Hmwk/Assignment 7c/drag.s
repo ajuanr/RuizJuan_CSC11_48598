@@ -22,6 +22,7 @@ main:
     push {lr}
     sub sp, sp, #4             /* 8-byte align the sp */
 
+        /* load constants */
     ldr r1, =fRho
     vldr s7, [r1]              /* s7 = fRho */
     ldr r1, =fVel
@@ -41,22 +42,15 @@ main:
     vmov s16, s14              /* s16 = fDrag = fDynp * fArea */
     vmul.f32 s16, s16, s15
 
-/*    vmul.f32 s14, =fRho /*   fDynp*=fRho;
-       fDynp*=fVel;
-        fDynp*=fVel;
-        fArea=fPi;
-        fArea*=fRad;
-        fArea*=fRad;
-        fArea*=fConv;
-        fDrag=fDynp*fArea;
-        fDrag*=fCd;
-        iDummy>>=16;
-        iDummy<<=13;
-        iDummy>>=12;
-        iDummy<<=15;
-        iDummy>>=12;*/
+    vmul.f32 s14, s14, s7      @ fDynp*=fRho;
+    vmul.f32 s14, s14, s8      @ fDynp*=fVel;
+    vmul.f32 s14, s14, s8      @ fDynp*=fVel;
+    vmul.f32 s15, s15, s9      @ fArea*=fRad;
+    vmul.f32 s15, s15, s9      @ fArea*=fRad;
+    vmul.f32 s15, s15, s10     @ fArea*=fConv;
+    vmul.f32 s16, s16, s11      @ fDrag*=fCd;
 
-    vcvt.f64.f32 d0, s16
+    vcvt.f64.f32 d0, s14
     ldr r0, =testMsg
     vmov r2, r3, d0
     bl printf

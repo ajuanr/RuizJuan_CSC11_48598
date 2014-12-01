@@ -54,9 +54,11 @@ main:
     str r0, [r1]    
 
     vcvt.f64.f32 d0, s14    /* convert to double for printing  */
-  
+
     ldr r0, =result         /* print the number */
     vmov r2, r3, d0
+    
+    
     bl printf
 
     add sp, sp, #4         /* restore the stack */
