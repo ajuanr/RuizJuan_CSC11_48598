@@ -12,8 +12,6 @@ tempArray: .skip 1024
 .align 4
 val: .asciz "%d "                          /* equivalent to tempArray[i] */
 
-
-
 .global main
 
 /* fill array function */
@@ -29,9 +27,9 @@ fillArray:
     mov r7, #0   /* start counting from zero */
     mov r8, #32  /* initial temperature is 32 F */
     fillLoop:
-       ldr r0, =val
-       mov r1, r8
-       bl printf
+       @ldr r0, =val
+       @mov r1, r8
+       @bl printf
 
        str r8, [r5, r7, lsl#2] 
        add r7, r7, #1           /* increment loop counter */
@@ -77,6 +75,11 @@ main:
 
 
     bl fillArray
+
+
+    mov r0, #198
+    ldr r1, =tempArray
+
     bl printArray
 
     /* print the values 
