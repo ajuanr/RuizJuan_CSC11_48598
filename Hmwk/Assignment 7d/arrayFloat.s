@@ -18,6 +18,13 @@ newLine: .asciz "\n"
 .balign 4
 initial: .float 212.0
 
+.balign 4
+thirtyTwo: .float 32.0
+.balign 4
+five: .float 5.0
+.balign 4
+nine: .float 9.0
+
 .text
 .global main
 
@@ -48,22 +55,24 @@ fillArray:
  */
 printArray:
     push {r4, r5, r6, lr}
+    vpush {s16, s17}
 
-    mov r4, r0              /* r4 holds the number of elements */
-    mov r5, r1              /* r5 holds the array */
+    mov r4, r0                     /* r4 holds the number of elements */
+    mov r5, r1                     /* r5 holds the array */
 
-    mov r6, #0              /* r6 holds the loop counter */
+    mov r6, #0                     /* r6 holds the loop counter */
     printLoop:
-        vldr r1, [r5, r5, lsl#2]
-@        ldr r1, [r5, r6, lsl#2]    /* get the element */
-@        mov r1, r1
+        ldr r1, [r5, r6, lsl#2]    /* get the element */
+        vldr s16, [r1]
+@       ldr r1, [r5, r6, lsl#2]    /* get the element */
+@       mov r1, r1
     
-        vcvt.f64.f32 d0, s14        /* convert to double for printing */
+        vcvt.f64.f32 d0, s16        /* convert to double for printing */
         ldr r0, =val
         vmov r2, r3, d0
         bl printf
 
-        add r6, r6, #1      /* increment and check if looping is complete */
+        add r6, r6, #1              /* increment and check if looping is complete */
         cmp r4, r6
         bne printLoop        
 
@@ -71,6 +80,7 @@ printArray:
         ldr r0, =newLine
         bl printf
 
+    vpop {s16, s17}
     pop {r4, r5, r6, lr}
     bx lr
   

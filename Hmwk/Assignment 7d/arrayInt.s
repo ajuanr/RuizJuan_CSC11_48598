@@ -52,7 +52,6 @@ printArray:
     mov r6, #0              /* r6 holds the loop counter */
     printLoop:
         ldr r1, [r5, r6, lsl#2]    /* get the element */
-        mov r1, r1
         ldr r0, =val
         bl printf
 

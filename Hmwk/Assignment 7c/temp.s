@@ -4,7 +4,7 @@
  */
 .data
 .balign 4
-delta: .asciz "%Delta time is %d\n"
+delta: .asciz "Delta time is %d\n"
 .balign 4
 result: .asciz "Temp is %f\n"
 
@@ -17,6 +17,7 @@ nine: .float 9.0
 beg: .word 0
 end: .word 0
 
+.text
 .global main
 main:
     push {lr}
