@@ -4,6 +4,8 @@ endTime: .word 0
 
 result: .asciz "\nInteger Dynamic Pressure = %f lbs\nCross-Sectional Area x 32 = %f ft^2\nInteger Drag x 32 = %f lbs\n\n"
 testMsg: .asciz "%f\n"
+delta: .asciz "Delta is: %d\n"
+mess: .asciz "Delta is: %d\n"
 
 
 fHalf: .float 0.5
@@ -13,6 +15,10 @@ fPi: .float 3.1415926     //atan(1)*4; //Pi
 fRad: .float 6            //Radius 6 to 18 inches
 fConv: .float 1.0         //144    //inches to feet
 fCd: .float 0.4           //Spherical Cd
+
+/* for delta time */
+beg: .word 0
+end: .word 0
 
 .text
 .global main
@@ -33,8 +39,18 @@ main:
     vldr s10, [r1]             /* s10 = fConv */
     ldr r1, =fCd
     vldr s11, [r1]             /* s11 = fCd */
-    
-     
+
+        /* Get initial time */
+    mov r0, #0
+    ldr r4, =beg
+    bl time
+    str r0, [r4]
+
+        /* loop to get some delta */
+    ldr r5, =100000000
+    loop:
+    cmp r5, #0
+    beq cont 
     ldr r1, =fHalf
     vldr s14, [r1]             /* s14 = fDynp = fHalf */
     ldr r1, =fPi
@@ -49,6 +65,24 @@ main:
     vmul.f32 s15, s15, s9      @ fArea*=fRad;
     vmul.f32 s15, s15, s10     @ fArea*=fConv;
     vmul.f32 s16, s16, s11      @ fDrag*=fCd;
+    
+    sub r5, r5, #1
+    b loop
+
+    cont:
+        /* Get final time */
+    mov r0, #0
+    ldr r4, =end
+    bl time
+    str r0, [r4]
+
+    ldr r1, =beg
+    ldr r1, [r1]
+    ldr r2, =end
+    ldr r2, [r2]
+    sub r1, r2, r1
+    ldr r0, =delta
+    bl printf
 
     vcvt.f64.f32 d0, s14
     ldr r0, =testMsg

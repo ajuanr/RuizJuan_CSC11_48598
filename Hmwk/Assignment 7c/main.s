@@ -3,12 +3,11 @@
  *    gcc -o main main.s
  */
 .data
-prompt: .asciz "Enter temperature from 32-212 in degrees Farenheit: "
-format: .asciz "%f"
 result: .asciz "Temp is %f\n"
 delta: .asciz "The delta time is: %d seconds\n"
-initial: .float 0
+mess: .asciz "%d"
 
+initial: .float 212.0
 thirtyTwo: .float 32.0
 five: .float 5.0
 nine: .float 9.0
@@ -22,15 +21,11 @@ main:
     push {lr}
     sub sp, sp, #4          /* 8-byte align the stack */
 
-    ldr r0, ad_of_prompt    /* print message to user */
-    bl printf
-
-    ldr r0, ad_of_format    /* read in the value */
-    ldr r1, ad_of_initial
-    bl scanf
-
-    ldr r1, ad_of_initial   /* put the value in floating point register */
-    vldr s14, [r1]
+        /* Get initial time */
+    mov r0, #0
+    ldr r4, =end
+    bl time
+    str r0, [r4]
 
     ldr r1, ad_of_thirtyTwo /* Get registers ready to put into floating point*/
     ldr r2, =five
@@ -40,32 +35,36 @@ main:
     vldr s16, [r2]
     vldr s17, [r3]
 
-    mov r0, #0             /* get the initial time */
-    ldr r1, =beg
-    str r0, [r1]
+    ldr r1, ad_of_initial   /* put the value in floating point register */
+    vldr s14, [r1]
 
     vsub.f32 s14, s14, s15  /* This is (F-32) as part of conversion */
     vmul.f32 s14, s14, s16
     vdiv.f32 s14, s14, s17
     
+cont:
+        /* Get final time */
+    mov r0, #0
+    ldr r4, =end
+    bl time
+    str r0, [r4]
 
-    mov r0, #0              /* get final time */
-    ldr r1, =end
-    str r0, [r1]    
+    ldr r1, =beg
+    ldr r1, [r1]
+    ldr r2, =end
+    ldr r2, [r2]
+    sub r1, r2, r1
+    ldr r0, =delta
+    bl printf
 
     vcvt.f64.f32 d0, s14    /* convert to double for printing  */
-
     ldr r0, =result         /* print the number */
     vmov r2, r3, d0
-    
-    
     bl printf
 
     add sp, sp, #4         /* restore the stack */
     pop {lr}               /* and exit */
     bx lr
 
-ad_of_prompt: .word prompt
-ad_of_format: .word format
 ad_of_initial: .word initial
 ad_of_thirtyTwo: .word thirtyTwo
