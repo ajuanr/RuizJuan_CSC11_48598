@@ -10,10 +10,13 @@
 tempArray: .skip 1024
 
 .balign 4
-val: .asciz "%d "                          /* equivalent to tempArray[i] */
+val: .asciz "%f "                          /* equivalent to tempArray[i] */
 
 .balign 4
 newLine: .asciz "\n"
+
+.balign 4
+initial: .float 212.0
 
 .text
 .global main
@@ -51,9 +54,13 @@ printArray:
 
     mov r6, #0              /* r6 holds the loop counter */
     printLoop:
-        ldr r1, [r5, r6, lsl#2]    /* get the element */
-        mov r1, r1
+        vldr r1, [r5, r5, lsl#2]
+@        ldr r1, [r5, r6, lsl#2]    /* get the element */
+@        mov r1, r1
+    
+        vcvt.f64.f32 d0, s14        /* convert to double for printing */
         ldr r0, =val
+        vmov r2, r3, d0
         bl printf
 
         add r6, r6, #1      /* increment and check if looping is complete */
@@ -73,11 +80,21 @@ printArray:
 FtoC:
     push {lr}
     sub sp, sp, #4
-   
-    ldr r2, =0x8E38F       /* 20 bits    >>20 */ 
-    sub r1, r1, #32        /* r1 = (Temp-32) */
-    mul r1, r2, r1          /* r1 = r1 * (5/9)<<20 */ 
-    mov r1, r1, lsr#20    /* r1 >> 20 */ 
+  
+    ldr r1, =initial   /* put the value in floating point register */
+    vldr s14, [r1]
+
+    ldr r1, =thirtyTwo /* Get registers ready to put into floaing point*/
+    ldr r2, =five
+    ldr r3, =nine
+
+    vldr s15, [r1]          /* Load the registers */
+    vldr s16, [r2]
+    vldr s17, [r3]
+
+    vsub.f32 s14, s14, s15  /* This is (F-32) as part of conversion */
+    vmul.f32 s14, s14, s16
+    vdiv.f32 s14, s14, s17 
     
     add sp, sp, #4
     pop {lr}
@@ -120,6 +137,7 @@ main:
     ldr r1, =tempArray
     bl printArray
 
+/*
     ldr r0, =newLine
     bl printf
 
@@ -130,6 +148,7 @@ main:
     mov r0, #199
     ldr r1, =tempArray
     bl printArray
+*/
 
            /* program complete. Exit stage right */
     add sp, sp, #4
