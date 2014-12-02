@@ -35,7 +35,7 @@ main:
     vldr s16, [r2]
     vldr s17, [r3]
 
-    ldr r1, ad_of_initial   /* put the value in floating point register */
+    ldr r1, =initial   /* put the value in floating point register */
     vldr s14, [r1]
 
     vsub.f32 s14, s14, s15  /* This is (F-32) as part of conversion */
@@ -66,5 +66,4 @@ cont:
     pop {lr}               /* and exit */
     bx lr
 
-ad_of_initial: .word initial
 ad_of_thirtyTwo: .word thirtyTwo
