@@ -31,7 +31,7 @@ five: .float 5.0
 nine: .float 9.0
 
 /* this is to test. Delete later */
-test: .word 2
+test: .word 212
 
 .text
 .global main
@@ -97,18 +97,16 @@ printFloats:
 
     mov r6, #0                     /* r6 holds the loop counter */
     floatsLoop:
-@         ldr r1, =test        /* DELETE: This is for testing */
+         ldr r1, =test        /* DELETE: This is for testing */
          
-        ldr r1, [r5, r6, lsl#2]    /* get the element */
+@        ldr r1, [r5, r6, lsl#2]    /* get the element */
+        bl FtoC                    /* Convert the number */
 
-        vldr s16, [r1]
-        vcvt.f32.s32 s16, s16
-    
-        vcvt.f64.f32 d0, s16       /* convert to double for printing */
+        vcvt.f64.f32 d2, s0      /* convert to double for printing */
         ldr r0, =valOut
-        vmov r2, r3, d0
+        vmov r2, r3, d2
         bl printf
-
+    
         add r6, r6, #1             /* increment and check if looping is complete */
         cmp r4, r6
         bne floatsLoop        
@@ -122,27 +120,29 @@ printFloats:
     bx lr
   
 /* coverts temperature from farenheit to celcius
+ * takes int argument returns a float (f32)
  * r1 = initial temperature
+ * new temp in s0
  */
 FtoC:
     push {lr}
     sub sp, sp, #4
-  
-    ldr r1, =initial   /* put the value in floating point register */
-    vldr s14, [r1]
 
-    ldr r1, =thirtyTwo /* Get registers ready to put into floaing point*/
+    vldr s0, [r1]                  
+    vcvt.f32.s32 s0, s0            /* r1 held an int convert it to float */ 
+
+    ldr r1, =thirtyTwo             /* Get registers ready to put into floaing point*/
     ldr r2, =five
     ldr r3, =nine
 
-    vldr s15, [r1]          /* Load the registers */
-    vldr s16, [r2]
-    vldr s17, [r3]
+    vldr s1, [r1]                  /* Load the registers */
+    vldr s2, [r2]
+    vldr s3, [r3]
 
-    vsub.f32 s14, s14, s15  /* This is (F-32) as part of conversion */
-    vmul.f32 s14, s14, s16
-    vdiv.f32 s14, s14, s17 
-    
+    vsub.f32 s0, s0, s1         /* This is (F-32) as part of conversion */
+    vmul.f32 s0, s0, s2         /* This is (f-32)*5 */
+    vdiv.f32 s0, s0, s3         /* This is ((f-32)*5)/9 */
+
     add sp, sp, #4
     pop {lr}
     bx lr
@@ -175,22 +175,26 @@ convArray:
 main:
     push {lr}
     sub sp, sp, #4      /* keep stack 8-byte aligned */
-/*  DELETE this block
+
+
+/*  DELETE this block */
         ldr r1, =test
-        vldr s16, [r1]
+         bl FtoC
     
-        vcvt.f64.f32 d0, s16       /* convert to double for printing *
+        vcvt.f64.f32 d2, s0      /* convert to double for printing *
         ldr r0, =valOut
-        vmov r2, r3, d0
+        vmov r2, r3, d2
         bl printf
-*/
+
+ end block */
+
     mov r0, #199
     ldr r1, =tempArray
     bl fillArray
 
     mov r0, #199
     ldr r1, =tempArray
-@    bl printInts
+    bl printInts
 
     mov r0, #199
     ldr r1, =tempArray
