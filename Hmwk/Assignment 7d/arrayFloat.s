@@ -1,19 +1,16 @@
 /*
  * This program initializes and array with temperatures from 32 to 212
  * in increments of five degrees
- * It convert the temperatures in degrees faranheit to celcius
+ * It converts the temperatures in degrees farenheit to celcius
  */
 
 .data
 
 .balign 4
-tempArray: .skip 1024
-
-/* this array contains doubles remember lsl#3 */
-celcArray: .skip 2048
+tempArray: .skip 2048
 
 .balign 4
-valOut: .asciz "%f "                          /* equivalent to tempArray[i] */
+valOut: .asciz "%f " 
 
 .balign 4
 intOut: .asciz "%d "
@@ -30,8 +27,14 @@ five: .float 5.0
 .balign 4
 nine: .float 9.0
 
+/* hold the converted farenheit temperature */
+.balign 4
+converted: .float 0
+
 /* this is to test. Delete later */
-test: .word 212
+testInt: .word 212
+
+
 
 .text
 .global main
@@ -90,18 +93,19 @@ printInts:
  */
 printFloats:
     push {r4, r5, r6,  lr}
-    vpush {s16, s17}               /* s17 unused keep, stack 8-byte aligned */
 
     mov r4, r0                     /* r4 holds the number of elements */
     mov r5, r1                     /* r5 holds the array */
 
     mov r6, #0                     /* r6 holds the loop counter */
     floatsLoop:
-         ldr r1, =test        /* DELETE: This is for testing */
+        ldr r1, =testInt        /* DELETE: This is for testing */
          
 @        ldr r1, [r5, r6, lsl#2]    /* get the element */
         bl FtoC                    /* Convert the number */
 
+        ldr r1, ad_converted
+        vldr s0, [r1]
         vcvt.f64.f32 d2, s0      /* convert to double for printing */
         ldr r0, =valOut
         vmov r2, r3, d2
@@ -115,9 +119,9 @@ printFloats:
         ldr r0, =newLine
         bl printf
 
-    vpop {s16, s17}
     pop {r4, r5, r6, lr}
     bx lr
+
   
 /* coverts temperature from farenheit to celcius
  * takes int argument returns a float (f32)
@@ -125,8 +129,8 @@ printFloats:
  * new temp in s0
  */
 FtoC:
-    push {lr}
-    sub sp, sp, #4
+    push {r4, lr}
+    sub sp, sp, #8 
 
     vldr s0, [r1]                  
     vcvt.f32.s32 s0, s0            /* r1 held an int convert it to float */ 
@@ -143,9 +147,16 @@ FtoC:
     vmul.f32 s0, s0, s2         /* This is (f-32)*5 */
     vdiv.f32 s0, s0, s3         /* This is ((f-32)*5)/9 */
 
-    add sp, sp, #4
-    pop {lr}
+    /* Save the converted temperature for later use */ 
+    ldr r0, ad_converted
+    vmov r1,s3
+    str r1,[r0]
+
+    add sp, sp, #8
+    pop {r4, lr}
     bx lr
+
+    ad_converted: .word converted
 
 /* convert  array function */
 /* number of elements passed as r0
@@ -177,37 +188,41 @@ main:
     sub sp, sp, #4      /* keep stack 8-byte aligned */
 
 
-/*  DELETE this block */
-        ldr r1, =test
-         bl FtoC
+/*  DELETE this block  */
+        ldr r1, =testInt
+        bl FtoC
     
-        vcvt.f64.f32 d2, s0      /* convert to double for printing *
+        ldr r1, ad_converted
+        vldr s0, [r1]
+        vcvt.f64.f32 d2, s0      /* convert to double for printing */
         ldr r0, =valOut
         vmov r2, r3, d2
         bl printf
 
- end block */
+/* end block */
 
-    mov r0, #199
+    mov r0, #199               /* fill array with integers */
     ldr r1, =tempArray
-    bl fillArray
+@    bl fillArray
 
-    mov r0, #199
+    mov r0, #199              /* print the integer array */
     ldr r1, =tempArray
-    bl printInts
+@    bl printInts
 
-    ldr r0, =newLine
+    ldr r0, =newLine         /* seperate the printed arrays */
     bl printf
 
-    mov r0, #199
+    mov r0, #199             /* print an array of float */
     ldr r1, =tempArray
-    bl printFloats
+@    bl printFloats
+
+
 
 /*
     ldr r0, =newLine
     bl printf
 
-    mov r0, #199
+    mov r0, #199            /* convert the array *
     ldr r1, =tempArray
     bl convArray
 
