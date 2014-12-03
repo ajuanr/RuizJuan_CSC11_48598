@@ -10,6 +10,9 @@
 tempArray: .skip 2048
 
 .balign 4
+floatArray: .skip 2048
+
+.balign 4
 valOut: .asciz "%f " 
 
 .balign 4
@@ -33,6 +36,9 @@ converted: .float 0
 
 /* this is to test. Delete later */
 testInt: .word 212
+
+.balign 4
+tstMess: .asciz "In conversion\n"
 
 
 
@@ -67,16 +73,16 @@ fillArray:
 printInts:
     push {r4, r5, r6, lr}
 
-    mov r4, r0              /* r4 holds the number of elements */
-    mov r5, r1              /* r5 holds the array */
+    mov r4, r0                           /* r4 holds the number of elements */
+    mov r5, r1                           /* r5 holds the array */
 
-    mov r6, #0              /* r6 holds the loop counter */
+    mov r6, #0                           /* r6 holds the loop counter */
     intsLoop:
-        ldr r1, [r5, r6, lsl#2]    /* get the element */
+        ldr r1, [r5, r6, lsl#2]          /* get the element */
         ldr r0, =intOut
         bl printf
 
-        add r6, r6, #1      /* increment and check if looping is complete */
+        add r6, r6, #1                    /* increment and check if looping is complete */
         cmp r4, r6
         bne intsLoop        
 
@@ -94,25 +100,26 @@ printInts:
 printFloats:
     push {r4, r5, r6,  lr}
 
-    mov r4, r0                        /* r4 holds the number of elements */
-    mov r5, r1                        /* r5 holds the array */
+    mov r4, r0                           /* r4 holds the number of elements */
+    mov r5, r1                           /* r5 holds the array */
 
-    mov r6, #0                        /* r6 holds the loop counter */
+    mov r6, #0                           /* r6 holds the loop counter */
     floatsLoop:
-        ldr r2, =testInt              /* DELETE: This is for testing */
-@        ldr r2, [r5, r6, lsl#2]      /* get the element */
+@        ldr r2, =testInt                /* DELETE: This is for testing */
+        ldr r2, [r5, r6, lsl#2]          /* get the element */
 
-         mov r1, r2
-         bl FtoC                       /* Convert the number */
+@         mov r1, r2
+@         bl FtoC                        /* Convert the number */
 
 @        ldr r1, =converted
 @        vldr s0, [r1]
-        vcvt.f64.f32 d2, s0           /* convert to double for printing */
+
+        vcvt.f64.f32 d2, s0              /* convert to double for printing */
         ldr r0, =valOut
         vmov r2, r3, d2
         bl printf
     
-        add r6, r6, #1                /* increment and check if looping is complete */
+        add r6, r6, #1                   /* increment and check if looping is complete */
         cmp r4, r6
         bne floatsLoop        
 
@@ -162,21 +169,35 @@ FtoC:
 /* convert  array function */
 /* number of elements passed as r0
 /* array is passed as r1 */
+/* destination is r2 */
 convArray:
     push {r4, r5, r6, r7, r8, lr}
 
-    mov r4, r0      /* r4 holds the numbmer of elements */
-    mov r5, r1      /* r5 holds the array */
+    
 
-    mov r7, #0   /* start counting from zero */
-    mov r8, #32  /* initial temperature is 32 F */
+    mov r4, r0                  /* r4 holds the numbmer of elements */
+    mov r5, r1                  /* r5 holds the array */
+    mov r6, r2                  /* r6 holds the destination array */
+
+    ldr r0, =tstMess
+    bl printf
+
+    mov r7, #0                  /* start counting from zero */
     convLoop:
-       mov r1, r8
-       bl FtoC                  /* FtoC returns temp in r1 */
-              
-       str r1, [r5, r7, lsl#2] 
-       add r7, r7, #1           /* increment loop counter */
-       add r8, r8, #5           /* increment temp in 5 degree increments */
+       mov r1, r7
+       bl FtoC                  /* FtoC returns temp in s0 */
+
+       ldr r0, = intOut
+       bl printf
+
+       vcvt.f64.f32 d2, s0      /* convert to double for printing *
+       ldr r0, =valOut
+       vmov r2, r3, d2
+       bl printf
+
+       vmov r8, s0 
+       str r8, [r6, r7, lsl#2]
+       add r7, r7, #1             /* increment loop counter */
        cmp r7, r4
        bne convLoop
     
@@ -186,7 +207,7 @@ convArray:
 
 main:
     push {lr}
-    sub sp, sp, #4      /* keep stack 8-byte aligned */
+    sub sp, sp, #4                /* keep stack 8-byte aligned */
 
 /*  DELETE this block  *
         ldr r1, =testInt
@@ -199,32 +220,38 @@ main:
         vmov r2, r3, d2
         bl printf
 
-/* end block */
+ end block */
 
-    mov r0, #199               /* fill array with integers */
+    mov r0, #199                 /* fill array with integers */
     ldr r1, =tempArray
     bl fillArray
 
-    mov r0, #199              /* print the integer array */
+    mov r0, #199                 /* print the integer array */
     ldr r1, =tempArray
     bl printInts
 
-    ldr r0, =newLine         /* seperate the printed arrays */
+    ldr r0, =newLine             /* seperate the printed arrays */
     bl printf
 
-    mov r0, #199             /* print an array of float */
-    ldr r1, =tempArray
-    bl printFloats
+    ldr r0, =tstMess        /* test DELETE */
+    bl printf
+   
+@    mov r0, #199                /* convert the array *
+@    ldr r1, =tempArray
+@    ldr r2, =floatArray
+   @ bl convArray
 
+    ldr r0, =tstMess        /* test Delete */
+    bl printf
 
+    mov r0, #199                 /* print an array of float */
+    ldr r1, =floatArray
+@    bl printFloats
 
 /*
     ldr r0, =newLine
     bl printf
 
-    mov r0, #199            /* convert the array *
-    ldr r1, =tempArray
-    bl convArray
 
     mov r0, #199
     ldr r1, =tempArray
