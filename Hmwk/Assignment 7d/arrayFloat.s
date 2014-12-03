@@ -173,27 +173,17 @@ FtoC:
 convArray:
     push {r4, r5, r6, r7, r8, lr}
 
-    
-
-    mov r4, r0                  /* r4 holds the numbmer of elements */
-    mov r5, r1                  /* r5 holds the array */
-    mov r6, r2                  /* r6 holds the destination array */
+    mov r4, r0                    /* r4 holds the numbmer of elements */
+    mov r5, r1                    /* r5 holds the array */
+    mov r6, r2                    /* r6 holds the destination array */
 
     ldr r0, =tstMess
     bl printf
 
-    mov r7, #0                  /* start counting from zero */
+    mov r7, #0                    /* start counting from zero */
     convLoop:
-       mov r1, r7
-       bl FtoC                  /* FtoC returns temp in s0 */
-
-       ldr r0, = intOut
-       bl printf
-
-       vcvt.f64.f32 d2, s0      /* convert to double for printing *
-       ldr r0, =valOut
-       vmov r2, r3, d2
-       bl printf
+       ldr r1, [r5, r7, lsl#2]
+       bl FtoC                    /* FtoC returns temp in s0 */
 
        vmov r8, s0 
        str r8, [r6, r7, lsl#2]
@@ -204,23 +194,9 @@ convArray:
     pop {r4, r5, r6,r7, r8, lr}
     bx lr
 
-
 main:
     push {lr}
     sub sp, sp, #4                /* keep stack 8-byte aligned */
-
-/*  DELETE this block  *
-        ldr r1, =testInt
-        bl FtoC
-    
-@        ldr r1, =converted
-@        vldr s0, [r1]
-        vcvt.f64.f32 d2, s0      /* convert to double for printing *
-        ldr r0, =valOut
-        vmov r2, r3, d2
-        bl printf
-
- end block */
 
     mov r0, #199                 /* fill array with integers */
     ldr r1, =tempArray
@@ -236,10 +212,10 @@ main:
     ldr r0, =tstMess        /* test DELETE */
     bl printf
    
-@    mov r0, #199                /* convert the array *
-@    ldr r1, =tempArray
-@    ldr r2, =floatArray
-   @ bl convArray
+    mov r0, #199                /* convert the array */
+    ldr r1, =tempArray
+    ldr r2, =floatArray
+    bl convArray
 
     ldr r0, =tstMess        /* test Delete */
     bl printf
