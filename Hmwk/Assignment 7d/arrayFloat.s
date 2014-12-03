@@ -21,7 +21,7 @@ intOut: .asciz "%d "
 newLine: .asciz "\n"
 
 .balign 4
-initial: .float 212.0
+initial: .float 32.0
 
 .balign 4
 thirtyTwo: .float 32.0
@@ -195,6 +195,9 @@ main:
     mov r0, #199
     ldr r1, =tempArray
     bl printInts
+
+    ldr r0, =newLine
+    bl printf
 
     mov r0, #199
     ldr r1, =tempArray
