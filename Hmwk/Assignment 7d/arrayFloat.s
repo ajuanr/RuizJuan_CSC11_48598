@@ -9,9 +9,14 @@
 .balign 4
 tempArray: .skip 1024
 
-.balign 4
-val: .asciz "%f "                          /* equivalent to tempArray[i] */
+/* this array contains doubles remember lsl#3 */
+celcArray: .skip 2048
 
+.balign 4
+valOut: .asciz "%f "                          /* equivalent to tempArray[i] */
+
+.balign 4
+intOut: .asciz "%d "
 .balign 4
 newLine: .asciz "\n"
 
@@ -24,6 +29,9 @@ thirtyTwo: .float 32.0
 five: .float 5.0
 .balign 4
 nine: .float 9.0
+
+/* this is to test. Delete later */
+test: .word 2
 
 .text
 .global main
@@ -49,32 +57,61 @@ fillArray:
     pop {r4, r5, r6,r7, r8, lr}
     bx lr
 
-/* Print the elements of an array
+/* Print the elements of an int array
  * r0 = number of elements
  * r1 = the array
  */
-printArray:
+printInts:
     push {r4, r5, r6, lr}
-    vpush {s16, s17}
+
+    mov r4, r0              /* r4 holds the number of elements */
+    mov r5, r1              /* r5 holds the array */
+
+    mov r6, #0              /* r6 holds the loop counter */
+    intsLoop:
+        ldr r1, [r5, r6, lsl#2]    /* get the element */
+        ldr r0, =intOut
+        bl printf
+
+        add r6, r6, #1      /* increment and check if looping is complete */
+        cmp r4, r6
+        bne intsLoop        
+
+        /* print a new line */
+        ldr r0, =newLine
+        bl printf
+
+    pop {r4, r5, r6, lr}
+    bx lr
+
+/* Print the elements of an float array
+ * r0 = number of elements
+ * r1 = the array
+ */
+printFloats:
+    push {r4, r5, r6,  lr}
+    vpush {s16, s17}               /* s17 unused keep, stack 8-byte aligned */
 
     mov r4, r0                     /* r4 holds the number of elements */
     mov r5, r1                     /* r5 holds the array */
 
     mov r6, #0                     /* r6 holds the loop counter */
-    printLoop:
+    floatsLoop:
+@         ldr r1, =test        /* DELETE: This is for testing */
+         
         ldr r1, [r5, r6, lsl#2]    /* get the element */
+
         vldr s16, [r1]
-@       ldr r1, [r5, r6, lsl#2]    /* get the element */
-@       mov r1, r1
+        vcvt.f32.s32 s16, s16
     
-        vcvt.f64.f32 d0, s16        /* convert to double for printing */
-        ldr r0, =val
+        vcvt.f64.f32 d0, s16       /* convert to double for printing */
+        ldr r0, =valOut
         vmov r2, r3, d0
         bl printf
 
-        add r6, r6, #1              /* increment and check if looping is complete */
+        add r6, r6, #1             /* increment and check if looping is complete */
         cmp r4, r6
-        bne printLoop        
+        bne floatsLoop        
 
         /* print a new line */
         ldr r0, =newLine
@@ -138,14 +175,26 @@ convArray:
 main:
     push {lr}
     sub sp, sp, #4      /* keep stack 8-byte aligned */
-
+/*  DELETE this block
+        ldr r1, =test
+        vldr s16, [r1]
+    
+        vcvt.f64.f32 d0, s16       /* convert to double for printing *
+        ldr r0, =valOut
+        vmov r2, r3, d0
+        bl printf
+*/
     mov r0, #199
     ldr r1, =tempArray
     bl fillArray
 
     mov r0, #199
     ldr r1, =tempArray
-    bl printArray
+@    bl printInts
+
+    mov r0, #199
+    ldr r1, =tempArray
+    bl printFloats
 
 /*
     ldr r0, =newLine
