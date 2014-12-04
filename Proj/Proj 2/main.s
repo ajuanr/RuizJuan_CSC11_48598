@@ -10,6 +10,9 @@
 */
 
 .balign 4
+testMess: .asciz "Divmod return is: %d\n"
+
+.balign 4
 dealer: .skip 56
 
 .balign 4
@@ -53,7 +56,11 @@ fillArray:
 
     mov r7, #0                           /* start counting from zero */
     fillLoop:
-       str r7, [r5, r7, lsl#2] 
+       mov r0, #0
+       ldr r1, adr_ttlCard
+       ldr r1, [r1]
+       bl random
+       str r0, [r5, r7, lsl#2] 
        add r7, r7, #1                    /* increment loop counter */
        cmp r7, r4
        bne fillLoop
@@ -68,12 +75,12 @@ fillArray:
 printArray:
     push {r4, r5, r6, lr}
 
-    mov r4, r0              /* r4 holds the number of elements */
-    mov r5, r1              /* r5 holds the array */
+    mov r4, r0                             /* r4 holds the number of elements */
+    mov r5, r1                             /* r5 holds the array */
 
-    mov r6, #0              /* r6 holds the loop counter */
+    mov r6, #0                             /* r6 holds the loop counter */
     printLoop:
-        ldr r1, [r5, r6, lsl#2]    /* get the element */
+        ldr r1, [r5, r6, lsl#2]            /* get the element */
         ldr r0, =val
         bl printf
 
@@ -93,6 +100,14 @@ main:
     push {lr}
     sub sp, sp, #4      /* keep stack 8-byte aligned */
 
+    mov r0, #10
+    ldr r1, adr_ttlCard
+    ldr r1, [r1]
+    bl random
+    mov r1, r0
+    ldr r0, =testMess
+    bl printf
+
     ldr r0, adr_ttlCard
     ldr r0, [r0]
     ldr r1, adr_cardVal
@@ -107,6 +122,7 @@ main:
     ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl printArray
+
 
         /* Exit stage right */
     add sp, sp, #4
