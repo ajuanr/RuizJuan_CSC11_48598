@@ -40,6 +40,8 @@ testInt: .word 212
 .balign 4
 tstMess: .asciz "In conversion\n"
 
+.balign 4
+tstMess2: .asciz "working\n"
 
 
 .text
@@ -155,10 +157,11 @@ FtoC:
     vmul.f32 s0, s0, s2         /* This is (f-32)*5 */
     vdiv.f32 s0, s0, s3         /* This is ((f-32)*5)/9 */
 
-    /* Save the converted temperature for later use */ 
-    @ldr r0, ad_converted
-    @vmov r1,s3
-    @str r1,[r0]
+    /* Save the converted temperature for later use  
+    ldr r0, ad_converted
+    vmov r1,s3
+    str r1,[r0]
+    */
 
     add sp, sp, #8
     pop {r4, lr}
@@ -168,16 +171,16 @@ FtoC:
 
 /* convert  array function */
 /* number of elements passed as r0
-/* array is passed as r1 */
+/* input array is r1 */
 /* destination is r2 */
 convArray:
     push {r4, r5, r6, r7, r8, lr}
 
     mov r4, r0                    /* r4 holds the numbmer of elements */
-    mov r5, r1                    /* r5 holds the array */
+    mov r5, r1                    /* r5 holds the input array */
     mov r6, r2                    /* r6 holds the destination array */
 
-    ldr r0, =tstMess
+    ldr r0, =tstMess2
     bl printf
 
     mov r7, #0                    /* start counting from zero */
@@ -222,7 +225,7 @@ main:
 
     mov r0, #199                 /* print an array of float */
     ldr r1, =floatArray
-@    bl printFloats
+    bl printFloats
 
 /*
     ldr r0, =newLine
