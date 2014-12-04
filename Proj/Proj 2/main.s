@@ -56,11 +56,7 @@ fillArray:
 
     mov r7, #0                           /* start counting from zero */
     fillLoop:
-       mov r0, #0
-       ldr r1, adr_ttlCard
-       ldr r1, [r1]
-       bl random
-       str r0, [r5, r7, lsl#2] 
+       str r7, [r5, r7, lsl#2] 
        add r7, r7, #1                    /* increment loop counter */
        cmp r7, r4
        bne fillLoop
