@@ -83,30 +83,31 @@ main:
     ldr r1, adr_shflIndx
     bl shuffle
 
-    ldr r0, adr_nCard         /* print out the shuffled index */
+    /* 
+    ldr r0, adr_nCard         /* print out the shuffled index *
     ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl printArray
 
     ldr r0, adr_cIndx
     ldr r0, [r0]
-    ldr r1, adr_shflIndx        /* deal one card to player */
+    ldr r1, adr_shflIndx        /* deal one card to player *
     mov r2, #0
     ldr r3, adr_plyrHnd 
     bl dealOne
 
-    mov r0, #1                 /* print out player card */
+    mov r0, #1                 /* print out player card *
     ldr r1, adr_plyrHnd
     bl printArray
 
-    ldr r0, adr_cIndx      /* increment index */
+    ldr r0, adr_cIndx      /* increment index *
     ldr r1, [r0]
     add r1, r1, #1
     str r1, [r0]
 
     ldr r0, adr_cIndx
     ldr r0, [r0]
-    ldr r1, adr_shflIndx        /* deal one card to dealer */
+    ldr r1, adr_shflIndx        /* deal one card to dealer *
     mov r2, #0
     ldr r3, adr_dlrHnd 
     bl dealOne
@@ -114,6 +115,18 @@ main:
     mov r0, #1
     ldr r1, adr_dlrHnd
     bl printArray 
+    */
+
+   bl dealInit
+
+   mov r0, #2
+   ldr r1, adr_plyrHnd 
+   bl printArray
+
+    mov r0, #2
+    ldr r1, adr_dlrHnd
+    bl printArray 
+   
 
 
         /* Exit stage right */

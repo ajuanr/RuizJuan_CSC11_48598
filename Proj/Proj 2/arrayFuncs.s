@@ -125,5 +125,70 @@ dealOne:
     bx lr
 /* exit deal function */
 
+/* Game opening. deal two cards two players and two to dealer *
+ * pass player hand in r0
+ * pass dealer hand in r1
+ * pass cardIndex in r2
+ *    return card index in r0
+ */
+.global dealInit
+dealInit:
+    push {r4, r5, r6, lr}
+
+    mov r4, r0
+    mov r5, r1
+    mov r6, r2
+
+    ldr r0, adr_cIndx
+    ldr r0, [r0]
+    ldr r1, adr_shflIndx        /* deal one card to player */
+    mov r2, #0
+    ldr r3, adr_plyrHnd
+    bl dealOne
+
+    ldr r0, adr_cIndx      /* increment index */
+    ldr r1, [r0]
+    add r1, r1, #1
+    str r1, [r0]
+
+    ldr r0, adr_cIndx
+    ldr r0, [r0]
+    ldr r1, adr_shflIndx        /* deal one card to dealer */
+    mov r2, #0
+    ldr r3, adr_dlrHnd
+    bl dealOne
+
+    ldr r0, adr_cIndx      /* increment index */
+    ldr r1, [r0]
+    add r1, r1, #1
+    str r1, [r0]
+
+    ldr r0, adr_cIndx
+    ldr r0, [r0]
+    ldr r1, adr_shflIndx        /* deal second card to player */
+    mov r2, #0
+    ldr r3, adr_plyrHnd
+    bl dealOne
+
+    ldr r0, adr_cIndx      /* increment index */
+    ldr r1, [r0]
+    add r1, r1, #1
+    str r1, [r0]
+
+    ldr r0, adr_cIndx
+    ldr r0, [r0]
+    ldr r1, adr_shflIndx        /* deal second card to dealer */
+    mov r2, #0
+    ldr r3, adr_dlrHnd
+    bl dealOne
+
+    ldr r0, adr_cIndx      /* increment index */
+    ldr r1, [r0]
+    add r1, r1, #1
+    str r1, [r0]
+
+    pop {r4, r5, r6, lr}
+    bx lr
+
 adr_newLine: .word newLine
 adr_intOut: .word intOut
