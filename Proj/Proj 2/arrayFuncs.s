@@ -5,7 +5,7 @@ intOut: .asciz "%d "
 .balign 4
 newLine: .asciz "\n"
 /* fill array function */
-/* number of elements passed as r0
+/* number of elements passed as r0 */
 /* array is passed as r1 */
 
 .text
@@ -28,7 +28,7 @@ fillArray:
 
 /* Print the elements of an array
  * r0 = number of elements
- * r1 = the array
+ * r1 = input array
  */
 .global printArray
 printArray:
@@ -43,7 +43,7 @@ printArray:
         ldr r0, adr_intOut
         bl printf
 
-        add r6, r6, #1      /* increment and check if looping is complete */
+        add r6, r6, #1                     /* increment and check if looping is complete */
         cmp r4, r6
         bne printLoop
 
@@ -52,6 +52,49 @@ printArray:
         bl printf
 
     pop {r4, r5, r6, lr}
+    bx lr
+/* exit printArray */
+
+/* Shuffle an array
+ * r0 = number of elements
+ * r1 = input array
+ */
+.global shuffle
+shuffle:
+    push {r4, r5, r6, r7, r8, r9, r10, lr}
+
+    mov r4, r0                              /* save the number of elements */
+    mov r5, r1                             /* and the array */
+
+    /* shuffle 7 times */
+    mov r6, #0                             /* r6 holds number of times shuffled */
+    shuffleLoop:
+        // swap elements
+        mov r7, #0                         /* r7 holds counter for shuffleLoop */
+        swapLoop:
+            mov r0, #0                     /* min for random*/
+            mov r1, r4                     /* max, for random */
+            bl random                      /* get the index of the number to swap, in r0 */
+
+        @    ldr r8, [r5, r7, lsl#2]        /* r8 holds array[i] */
+        @    ldr r9, [r5, r0, lsl#2]        /* r9 holds array[random] */
+            str r0, [r5, r0, lsl#2]
+                                            /* swap the values */
+        @     mov r10, r8                    /* r10 is temp */
+        @     mov r8, r9
+        @     mov r9, r10
+        @     str r9, [r5, r7, lsl#2]
+        @     str r8, [r7, r0, lsl#2]         
+            
+            add r7, r7, #1
+            cmp r7, r4
+            bne swapLoop
+            
+        add r6, r6, #1              
+        cmp r6, #7
+        bne shuffleLoop
+
+    pop {r4, r5, r6, r7, r8, r9, r10, lr}
     bx lr
 
 adr_newLine: .word newLine

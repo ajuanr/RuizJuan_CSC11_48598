@@ -35,7 +35,7 @@ shflIndx: .skip 56
 shuflIndx: .skip 220
 
 /* Total number of cards in the deck. Constant */
-ttlCrd: .word 52
+nCard: .word 52
 
 .balign 4
 newLine: .asciz "\n" 
@@ -46,17 +46,35 @@ main:
     push {lr}
     sub sp,sp, #4
 
-    ldr r0, adr_ttlCard
+mov r0, #10
+    ldr r1, adr_nCard
+    ldr r1, [r1]
+    bl random
+    mov r1, r0
+    ldr r0, =testMess
+    bl printf
+
+    ldr r0, adr_nCard
     ldr r0, [r0]
     ldr r1, adr_cardVal
     bl printArray
 
-    ldr r0, adr_ttlCard
+    ldr r0, adr_nCard
     ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl fillArray
 
-    ldr r0, adr_ttlCard
+    ldr r0, adr_nCard
+    ldr r0, [r0]
+    ldr r1, adr_shflIndx
+    bl printArray
+
+    ldr r0, adr_nCard
+    ldr r0, [r0]
+    ldr r1, adr_shflIndx
+    bl shuffle
+
+    ldr r0, adr_nCard
     ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl printArray
@@ -69,6 +87,6 @@ main:
 
 adr_cardVal: .word cardVal
 adr_shflIndx: .word shflIndx
-adr_ttlCard: .word ttlCrd
+adr_nCard: .word nCard
 adr_newLine: .word newLine
 
