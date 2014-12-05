@@ -1,3 +1,6 @@
+/* This file holds functions for manipulating arrays */
+
+
 .data
 .balign 4
 intOut: .asciz "%d "
@@ -64,27 +67,19 @@ shuffle:
     push {r4, r5, r6, r7, r8, r9, r10, lr}
 
     mov r4, r0                              /* save the number of elements */
-    mov r5, r1                             /* and the array */
+    mov r5, r1                              /* and the array */
 
     /* shuffle 7 times */
-    mov r6, #0                             /* r6 holds number of times shuffled */
+    mov r6, #0                              /* r6 holds number of times shuffled */
+ 
     shuffleLoop:
         // swap elements
-        mov r7, #0                         /* r7 holds counter for shuffleLoop */
+        mov r7, #0                          /* r7 holds counter for shuffleLoop */
         swapLoop:
-            mov r0, #0                     /* min for random*/
-            mov r1, r4                     /* max, for random */
-            bl random                      /* get the index of the number to swap, in r0 */
+            mov r0, #0                      /* min for random*/
+            mov r1, r4                      /* max, for random */
+            bl random                       /* get the index of the number to swap, in r0 */
 
-        @    ldr r8, [r5, r7, lsl#2]        /* r8 holds array[i] */
-        @    ldr r9, [r5, r0, lsl#2]        /* r9 holds array[random] */
-            str r0, [r5, r0, lsl#2]
-                                            /* swap the values */
-        @     mov r10, r8                    /* r10 is temp */
-        @     mov r8, r9
-        @     mov r9, r10
-        @     str r9, [r5, r7, lsl#2]
-        @     str r8, [r7, r0, lsl#2]         
             
             add r7, r7, #1
             cmp r7, r4
