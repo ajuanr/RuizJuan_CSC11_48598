@@ -80,6 +80,12 @@ shuffle:
             mov r1, r4                      /* max, for random */
             bl random                       /* get the index of the number to swap, in r0 */
 
+            mov r3, r0                      /* save the index returned from random */
+            ldr r1, [r5, r3,lsl#2]          /* save array[i] */ 
+            ldr r2, [r5, r7, lsl#2]         /* save array[random] */
+        
+            str r1, [r5, r7, lsl#2]         /* swap the values */ 
+            str r2, [r5, r3, lsl#2]
             
             add r7, r7, #1
             cmp r7, r4
