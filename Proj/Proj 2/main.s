@@ -5,7 +5,7 @@
 
 .data 
 /* arrays holding the hand of the player and dealer 
- * max number of card with one deck is 11: A A A A 2 2 2 2 3 3 3 = 21
+ * max number of cards with one deck is 11: A A A A 2 2 2 2 3 3 3 = 21
  * array padded with room for three more cards/
 */
 
@@ -46,13 +46,10 @@ main:
     push {lr}
     sub sp,sp, #4
 
-mov r0, #10
-    ldr r1, adr_nCard
-    ldr r1, [r1]
-    bl random
-    mov r1, r0
-    ldr r0, =testMess
-    bl printf
+    /* seed random number generator */
+    mov r0, #0
+    bl time
+    bl srand
 
     ldr r0, adr_nCard
     ldr r0, [r0]
