@@ -15,6 +15,9 @@
  * max number of cards with one deck is 11: A A A A 2 2 2 2 3 3 3 = 21
  * array padded with room for three more cards/
 */
+.balign 4
+mess: .asciz "Value is: %d\n"
+
 
 .balign 4
 dlrHnd: .skip 56
@@ -34,7 +37,7 @@ cardVal:
      .word 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
      .word 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
 
-/* This array will hold the index of wchich card to shuffle next */
+/* This array will hold the index of which card to shuffle next */
 shflIndx: .skip 56
 
 /* this array holds the index of the next card to be dealt */
@@ -83,51 +86,20 @@ main:
     ldr r1, adr_shflIndx
     bl shuffle
 
-    /* 
-    ldr r0, adr_nCard         /* print out the shuffled index *
+    ldr r0, adr_nCard       /* print initialized index */
     ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl printArray
 
     ldr r0, adr_cIndx
     ldr r0, [r0]
-    ldr r1, adr_shflIndx        /* deal one card to player *
-    mov r2, #0
-    ldr r3, adr_plyrHnd 
-    bl dealOne
+    ldr r1, adr_shflIndx
+    ldr r2, adr_cardVal
+    bl getCard
 
-    mov r0, #1                 /* print out player card *
-    ldr r1, adr_plyrHnd
-    bl printArray
-
-    ldr r0, adr_cIndx      /* increment index *
-    ldr r1, [r0]
-    add r1, r1, #1
-    str r1, [r0]
-
-    ldr r0, adr_cIndx
-    ldr r0, [r0]
-    ldr r1, adr_shflIndx        /* deal one card to dealer *
-    mov r2, #0
-    ldr r3, adr_dlrHnd 
-    bl dealOne
-
-    mov r0, #1
-    ldr r1, adr_dlrHnd
-    bl printArray 
-    */
-
-   bl dealInit
-
-   mov r0, #2
-   ldr r1, adr_plyrHnd 
-   bl printArray
-
-    mov r0, #2
-    ldr r1, adr_dlrHnd
-    bl printArray 
-   
-
+    mov r1, r0
+    ldr r0, =mess 
+    bl printf
 
         /* Exit stage right */
     add sp, sp, #4
