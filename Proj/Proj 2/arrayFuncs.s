@@ -73,7 +73,7 @@ shuffle:
     mov r6, #0                              /* r6 holds number of times shuffled */
  
     shuffleLoop:
-        // swap elements
+        /* swap elements */
         mov r7, #0                          /* r7 holds counter for shuffleLoop */
         swapLoop:
             mov r0, #0                      /* min for random*/
@@ -97,6 +97,28 @@ shuffle:
 
     pop {r4, r5, r6, r7, r8, r9, r10, lr}
     bx lr
+/* exit shuffle function */
+
+
+/* Function deals one card
+ * deal card from shflIndex passed in r0
+ * index where card will be placed is in r1
+ * deal the  card to array passed in r2
+ * 
+ */
+.global dealOne
+dealOne:
+    push {r4, r5, r6, lr}
+    
+   @ mov r4, r0      /* save the card to be dealt */
+   @ mov r5, r1      /* save the index */
+   @ mov r6, r2      /* save the array */
+
+    str r0, [r2, r1, lsl#2]
+
+    pop {r4, r5, r6, lr}
+    bx lr
+/* exit deal function */
 
 adr_newLine: .word newLine
 adr_intOut: .word intOut
