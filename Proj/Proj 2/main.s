@@ -17,9 +17,6 @@
 */
 
 .balign 4
-testMess: .asciz "Divmod return is: %d\n"
-
-.balign 4
 dlrHnd: .skip 56
 
 .balign 4
@@ -29,7 +26,7 @@ plyrHnd: .skip 56
 spltHnd: .skip 56
 
 /* this array holds the value of the 52 cards in the deck */
-/*card =   2, 3, 4, 5, 6, 7, 8, 9, 10, J,  Q,  K,  A */
+/* card =  2, 3, 4, 5, 6, 7, 8, 9, 10, J,  Q,  K,  A */
 .balign 4
 cardVal: 
      .word 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
@@ -91,17 +88,32 @@ main:
     ldr r1, adr_shflIndx
     bl printArray
 
-    ldr r0, adr_shflIndx        /* deal one card to player */
+    ldr r0, adr_cIndx
     ldr r0, [r0]
-    @mov r1, #0
-    ldr r1, adr_cIndx
-    ldr r1, [r1]
-    ldr r2, adr_plyrHnd 
+    ldr r1, adr_shflIndx        /* deal one card to player */
+    mov r2, #0
+    ldr r3, adr_plyrHnd 
     bl dealOne
 
     mov r0, #1                 /* print out player card */
     ldr r1, adr_plyrHnd
     bl printArray
+
+    ldr r0, adr_cIndx      /* increment index */
+    ldr r1, [r0]
+    add r1, r1, #1
+    str r1, [r0]
+
+    ldr r0, adr_cIndx
+    ldr r0, [r0]
+    ldr r1, adr_shflIndx        /* deal one card to dealer */
+    mov r2, #0
+    ldr r3, adr_dlrHnd 
+    bl dealOne
+
+    mov r0, #1
+    ldr r1, adr_dlrHnd
+    bl printArray 
 
 
         /* Exit stage right */
@@ -114,4 +126,5 @@ adr_shflIndx: .word shflIndx
 adr_nCard: .word nCard
 adr_newLine: .word newLine
 adr_plyrHnd: .word plyrHnd
+adr_dlrHnd: .word dlrHnd
 adr_cIndx: .word cIndx

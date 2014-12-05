@@ -101,10 +101,10 @@ shuffle:
 
 
 /* Function deals one card
- * deal card from shflIndex passed in r0
- * index where card will be placed is in r1
- * deal the  card to array passed in r2
- * 
+ * index where next card is              r0
+ * deal card from array passed in        r1
+ * index where card will be placed is in r2
+ * deal the card to array passed in      r3
  */
 .global dealOne
 dealOne:
@@ -113,8 +113,13 @@ dealOne:
    @ mov r4, r0      /* save the card to be dealt */
    @ mov r5, r1      /* save the index */
    @ mov r6, r2      /* save the array */
+    mov r7, r3
+    ldr r4, [r1, r0, lsl#2]     /* grab card from */
 
-    str r0, [r2, r1, lsl#2]
+@    mov r1,r4
+@    ldr r0, adr_intOut
+@    bl printf
+    str r4, [r7, r2, lsl#2]     /* put card here */
 
     pop {r4, r5, r6, lr}
     bx lr
