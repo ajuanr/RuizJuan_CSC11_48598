@@ -179,11 +179,23 @@ sumArray:
     sumLoop:
         ldr r0, [r5, r8, lsl#2]
         add r6, r6, r0
+        cmp r0, #11
+        addeq r7,r7, #1
 
         add r8,r8, #1
         cmp r8, r4
         bne sumLoop
 
+    aceLoop:                   /* keep aces from resulting in bust */
+        cmp r7, #0             /* if no aces dealt, Exit */
+        beq exit
+        cmp r6, #21            /* hand with aces != bust, Exit */
+        ble exit
+        sub r6, r6, #10        /* otherwise change value of ace to 1, sub 10 from hand */
+        sub r7, r7, #1
+        b aceLoop
+
+    exit: 
     mov r0, r6                /* return the sum in r0 */
 
     pop {r4-r8,  lr}

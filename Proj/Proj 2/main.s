@@ -11,7 +11,6 @@
  */
 
 .data 
-
 /************************************
  ****** Output messages go here *****
  ***********************************/
@@ -19,7 +18,7 @@
 mess: .asciz "Value is: %d\n"
 
 .balign 4
-shwPlyr: .asciz "You have: "
+shwPlyr: .asciz "You have:  "
 
 .balign 4
 shwDlr: .asciz "Dealer has: "
@@ -38,6 +37,12 @@ hit: .asciz "you chose to hit\n"
 
 .balign 4
 stand: .asciz "you chose to stand\n"
+
+.balign 4
+bstMess: .asciz "You have busted\n"
+
+.balign 4
+push: .asciz "Push\n"
 
 /************************************
  ****** Input formats  go here ******
@@ -217,12 +222,27 @@ main:
        mov r0, r6
        ldr r1, adr_plyrHnd
        bl printArray
+
+       /* after card has been dealt check if player has busted */
+       mov r0, r6                /* sum the total */
+       ldr r1, adr_plyrHnd
+       bl sumArray               /* returns sum in r0 */
+
+       cmp r0, #21 
+       bgt busted
+       
        b plyrCont
 
     choiceS:
        ldr r0, =stand
        bl printf
        b exit
+
+    busted:
+        /* subtract bet amount from player */
+        ldr r0, adr_bstMess
+        bl printf
+        b exit
 
     bjWin:
         /* multiply bet by 1.5 */
@@ -249,3 +269,4 @@ adr_hitStand: .word hitStand
 adr_hsFormat: .word hsFormat
 adr_hsChoice: .word hsChoice
 adr_hsCheck: .word hsCheck
+adr_bstMess: .word bstMess
