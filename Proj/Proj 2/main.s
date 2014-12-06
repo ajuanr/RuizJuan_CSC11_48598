@@ -234,9 +234,38 @@ main:
        b plyrCont
 
     choiceS:
-       ldr r0, =stand
+       /* after card has been dealt check if dealer has busted */
+       mov r0, r7                /* sum the total */
+       ldr r1, adr_plyrHnd
+       bl sumArray               /* returns sum in r0 */
+
+       cmp r0, #17
+       bgt busted
+
+       dealNext:
+       mov r0, r5
+       ldr r1, adr_shflIndx
+       ldr r2, adr_dlrHnd
+       mov r3, r7
+       bl deal
+       add r5, r5, #1
+       add r7, r7, #1
+
+       ldr r0, adr_shwDlr            /* show player what they've got */
        bl printf
-       b exit
+       mov r0, r6
+       ldr r1, adr_dlrHnd
+       bl printArray
+
+       /* after card has been dealt check if dealer has busted */
+       mov r0, r7                /* sum the total */
+       ldr r1, adr_plyrHnd
+       bl sumArray               /* returns sum in r0 */
+
+       cmp r0, #17
+       bgt busted
+       b dealNext
+
 
     busted:
         /* subtract bet amount from player */
