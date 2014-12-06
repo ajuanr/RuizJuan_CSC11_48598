@@ -97,9 +97,13 @@ main:
     ldr r2, adr_cardVal
     bl getCard
 
-    mov r1, r0
-    ldr r0, =mess 
-    bl printf
+    ldr r1, adr_plyrHnd
+    str r0, [r1]
+
+    ldr r1, adr_plyrHnd
+    mov r0, #1
+    bl printArray
+
 
         /* Exit stage right */
     add sp, sp, #4
