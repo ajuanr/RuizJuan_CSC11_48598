@@ -1,12 +1,19 @@
 /* This file holds functions for manipulating arrays */
-
-
 .data
 .balign 4
 intOut: .asciz "%d "
 
 .balign 4
 newLine: .asciz "\n"
+
+/* this array holds the value of the 52 cards in the deck */
+/* card =  2, 3, 4, 5, 6, 7, 8, 9, 10, J,  Q,  K,  A */
+.balign 4
+cardVal:
+     .word 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
+     .word 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
+     .word 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
+     .word 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
 
 .text
 /* fill array function */
@@ -102,7 +109,7 @@ shuffle:
 /* Function gets a card
  * index where next card is                  r0
  * get index from shuffled array passed in   r1
- * get card from array in                    r2
+ * get card from card value array in         r2
  */
 .global getCard
 getCard:
@@ -124,9 +131,8 @@ getCard:
 /* Function deals the initial two cards to player and dealer
  * index of next card passed in        r0
  * array holding cards passed in       r1
- * array where cards are place is in   r2
+ * array where cards are placed is in  r2
  * index where to place card           r3
- * index of shuffled array             r4
  * 
 */
 .global deal
@@ -140,8 +146,8 @@ deal:
 
     mov r0, r4
     mov r1, r5
-    mov r2, r6
-    bl getCard                  /* get card return a card in r0 */
+    ldr r2, adr_cardVal
+    bl getCard                  /* getCard returns a card in r0 */
 
     str r0, [r6, r7, lsl#2]
 
@@ -151,3 +157,4 @@ deal:
 
 adr_newLine: .word newLine
 adr_intOut: .word intOut
+adr_cardVal: .word cardVal

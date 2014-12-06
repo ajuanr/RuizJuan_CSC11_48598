@@ -93,44 +93,39 @@ main:
     ldr r0, adr_cIndx
     ldr r4, [r0]            /* save card index */
 
-/*
-    mov r0, r4
-    ldr r1, adr_shflIndx
-    ldr r2, adr_cardVal
-    bl getCard
 
-    ldr r1, adr_plyrHnd
-    str r0, [r1]
+    mov r5, #0                    /* r5 holds number of cards that have been dealt */                   
+    mov r6, #0                    /* r6 holds number of cards player has been dealt */
+    mov r7, #0                    /* r7 holds number of cards dealer has been dealt */
 
-    add r4, r4, #1
-    
-    mov r0, r4
-    ldr r1, adr_shflIndx
-    ldr r2, adr_cardVal
-    bl getCard
-    
-    mov r5, #1
-    ldr r1, adr_plyrHnd
-    str r0, [r1,r5, lsl#2]
-
-    ldr r1, adr_plyrHnd
-    mov r0, #2
-    bl printArray
-*/
-
-    mov r5, #0
-    dealLoop:
+    dealPlyr:
        mov r0, r5
        ldr r1, adr_shflIndx
        ldr r2, adr_plyrHnd
-       mov r3, r5
+       mov r3, r6
        bl deal
-       add r5, r5, #1
-       cmp r5, #7
-       bne dealLoop
+       add r5, r5, #1    
+       add r6, r6, #1              /* increment cards dealt to player */
+       cmp r6, #2
+       bne dealPlyr
 
-    mov r0, r5
+    mov r0, r6
     ldr r1, adr_plyrHnd
+    bl printArray
+
+
+    dealDlr:
+       ldr r1, adr_shflIndx
+       ldr r2, adr_dlrHnd
+       mov r3, r7
+       bl deal
+       add r5, r5, #1    
+       add r7, r7, #1              /* increment cards dealt to player */
+       cmp r7, #2
+       bne dealDlr
+
+    mov r0, r7
+    ldr r1, adr_dlrHnd
     bl printArray
 
         /* Exit stage right */
