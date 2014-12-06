@@ -162,16 +162,19 @@ deal:
  * checks for aces and changes their value from 11 to 1
  * if they would cause player to bust
  * 
- * pass the number of elements in  r0
- * pass the array in               r1
- * return the sum in               r0
+ * pass the number of elements in                  r0
+ * pass the array in                               r1
+ * pass stop condition in(21=player, 17=dealer) in r2
+ * return the sum in                               r0
+ 
  */
 .global sumArray
 sumArray:
-    push {r4-r8,  lr}
+    push {r4-r10,  lr}
 
     mov r4, r0                /* save num elements */
     mov r5, r1                /* save the array */
+    mov r9, r2
     mov r6, #0                /* initialize the sum */
     mov r7, #0                /* initialize the num of aces */
 
@@ -189,16 +192,17 @@ sumArray:
     aceLoop:                   /* keep aces from resulting in bust */
         cmp r7, #0             /* if no aces dealt, Exit */
         beq exit
-        cmp r6, #21            /* hand with aces != bust, Exit */
+        cmp r6, r9           /* hand with aces != bust, Exit */
         ble exit
         sub r6, r6, #10        /* otherwise change value of ace to 1, sub 10 from hand */
         sub r7, r7, #1
         b aceLoop
 
+
     exit: 
     mov r0, r6                /* return the sum in r0 */
 
-    pop {r4-r8,  lr}
+    pop {r4-r10,  lr}
     bx lr
 
 

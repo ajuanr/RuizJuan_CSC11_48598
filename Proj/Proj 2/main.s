@@ -226,6 +226,7 @@ main:
        /* after card has been dealt check if player has busted */
        mov r0, r6                /* sum the total */
        ldr r1, adr_plyrHnd
+       mov r2, #21
        bl sumArray               /* returns sum in r0 */
 
        cmp r0, #21 
@@ -234,14 +235,6 @@ main:
        b plyrCont
 
     choiceS:
-       /* after card has been dealt check if dealer has busted */
-       mov r0, r7                /* sum the total */
-       ldr r1, adr_plyrHnd
-       bl sumArray               /* returns sum in r0 */
-
-       cmp r0, #17
-       bgt busted
-
        dealNext:
        mov r0, r5
        ldr r1, adr_shflIndx
@@ -253,19 +246,25 @@ main:
 
        ldr r0, adr_shwDlr            /* show player what they've got */
        bl printf
-       mov r0, r6
+       mov r0, r7
        ldr r1, adr_dlrHnd
        bl printArray
 
        /* after card has been dealt check if dealer has busted */
        mov r0, r7                /* sum the total */
-       ldr r1, adr_plyrHnd
+       ldr r1, adr_dlrHnd
+       mov r2, #17               /* dealer hits on soft 17 */
        bl sumArray               /* returns sum in r0 */
 
-       cmp r0, #17
-       bgt busted
-       b dealNext
+       mov r10, r0
+       ldr r0, =mess
+       mov r1, r0
+       bl printf
 
+       mov r0, r10
+       cmp r0, #17
+       bge busted
+       b dealNext
 
     busted:
         /* subtract bet amount from player */
