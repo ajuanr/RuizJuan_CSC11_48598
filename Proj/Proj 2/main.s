@@ -48,6 +48,12 @@ plyrBst: .asciz "You have busted\n"
 dlrBst: .asciz "Dealer has busted\n"
 
 .balign 4
+plyrWins: .asciz "Player wins\n"
+
+.balign 4
+dlrWins:  .asciz "Dealer Wins\n"
+
+.balign 4
 push: .asciz "Push\n"
 
 /************************************
@@ -60,6 +66,12 @@ betForm: .asciz "%f"
 /***********************************
  ******** Data goes here ***********
  **********************************/
+.balign 4
+plyrScr: .word 0
+
+.balign 4
+dlrScr: .word 0
+
 .balign 4
 hsChoice: .word 0
 
@@ -240,38 +252,60 @@ main:
        b plyrCont
 
     choiceS:                        /* player stands. Dealer turn */
+       /* save player hand */
+       ldr r1, adr_plyrScr
+       str r0, [r1]  
        dealNext:
-       mov r0, r5
-       ldr r1, adr_shflIndx
-       ldr r2, adr_dlrHnd
-       mov r3, r7
-       bl deal
-       add r5, r5, #1
-       add r7, r7, #1
+           mov r0, r5
+           ldr r1, adr_shflIndx
+           ldr r2, adr_dlrHnd
+           mov r3, r7
+           bl deal
+           add r5, r5, #1
+           add r7, r7, #1
 
-       ldr r0, adr_shwDlr            /* show player what dealer has */
-       bl printf
-       mov r0, r7
-       ldr r1, adr_dlrHnd
-       bl printArray
+           ldr r0, adr_shwDlr            /* show player what dealer has */
+           bl printf
+           mov r0, r7
+           ldr r1, adr_dlrHnd
+           bl printArray
 
-       /* after card has been dealt check if dealer has busted */
-       mov r0, r7                /* sum the total */
-       ldr r1, adr_dlrHnd
-       mov r2, #17               /* dealer hits on soft 17 */
-       bl sumArray               /* returns sum in r0 */
+           /* after card has been dealt check if dealer has busted */
+            mov r0, r7                /* sum the total */
+           ldr r1, adr_dlrHnd
+           mov r2, #17               /* dealer hits on soft 17 */
+           bl sumArray               /* returns sum in r0 */
 
-       cmp r0, #21              /* dealer has busted */ 
-       bgt dlrBstd
+           cmp r0, #21              /* dealer has busted */ 
+           bgt dlrBstd
 
-       cmp r0, #17              /* dealer no longer hits */
-       bge checkWinner
-       b dealNext
+           cmp r0, #17              /* dealer no longer hits */
+           bge checkWinner 
+           b dealNext
 
     checkWinner:
-       ldr r0, = comp
-       bl printf
-       b exit
+       ldr r1, adr_plyrScr
+       ldr r1, [r1]
+       cmp r1, r0                   /* dealer hand in r0, player hand in r1 */
+       beq pushWon
+       bgt plyrWon
+       blt dlrWon
+
+       pushWon:
+           ldr r0, =push
+           bl printf
+           b exit
+       plyrWon:
+           ldr r0, =plyrWins
+           bl printf
+           b exit
+       dlrWon:
+           ldr r0, =dlrWins
+           bl printf
+           b exit
+       @ldr r0, = comp
+       @bl printf
+       @b exit
 
     plyrBstd:
         /* subtract bet amount from player */
@@ -312,3 +346,4 @@ adr_hsChoice: .word hsChoice
 adr_hsCheck: .word hsCheck
 adr_dlrBst: .word dlrBst
 adr_plyrBst: .word plyrBst
+adr_plyrScr: .word plyrScr
