@@ -45,7 +45,6 @@ shflIndx: .skip 56
 shuflIndx: .skip 220
 
 /* the index of the next card to be dealt */
-
 .balign 4
 cIndx: .word 0
 
@@ -92,7 +91,10 @@ main:
     bl printArray
 
     ldr r0, adr_cIndx
-    ldr r0, [r0]
+    ldr r4, [r0]            /* save card index */
+
+/*
+    mov r0, r4
     ldr r1, adr_shflIndx
     ldr r2, adr_cardVal
     bl getCard
@@ -100,10 +102,32 @@ main:
     ldr r1, adr_plyrHnd
     str r0, [r1]
 
+    add r4, r4, #1
+    
+    mov r0, r4
+    ldr r1, adr_shflIndx
+    ldr r2, adr_cardVal
+    bl getCard
+    
+    mov r5, #1
     ldr r1, adr_plyrHnd
-    mov r0, #1
-    bl printArray
+    str r0, [r1,r5, lsl#2]
 
+    ldr r1, adr_plyrHnd
+    mov r0, #2
+    bl printArray
+*/
+
+    mov r4, #5
+    mov r0, #0
+    ldr r1, adr_shflIndx
+    ldr r2, adr_plyrHnd
+    mov r3, r4
+    bl deal
+
+    mov r0, r4
+    ldr r1, adr_plyrHnd
+    bl printArray
 
         /* Exit stage right */
     add sp, sp, #4

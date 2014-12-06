@@ -7,11 +7,11 @@ intOut: .asciz "%d "
 
 .balign 4
 newLine: .asciz "\n"
+
+.text
 /* fill array function */
 /* number of elements passed as r0 */
 /* array is passed as r1 */
-
-.text
 .global fillArray
 fillArray:
     push {r4, r5, r6, r7, r8, lr}        /* r8 is unused */
@@ -99,8 +99,6 @@ shuffle:
     bx lr
 /* exit shuffle function */
 
-/* Functions gets a card */
-
 /* Function gets a card
  * index where next card is                  r0
  * get index from shuffled array passed in   r1
@@ -123,33 +121,39 @@ getCard:
     bx lr
 /* exit getCard function */
 
+/* Function deals the initial two card to player and dealer
+ * index of next card passed in        r0
+ * array holding cards passed in        r1
+ * array where cards are place is in   r2
+ * number of cards to deal in          r3
+ * 
+*/
+.global deal
+deal:
+    push {r4, r5, r6, r7, r8, lr}     
 
-/* Function deals one card
- * index where next card is              r0
- * deal card from array passed in        r1
- * index where card will be placed is in r2
- * deal the card to array passed in      r3
- */
-.global dealOne
-dealOne:
-    push {r4, r5, lr}
-    
-    mov r5, r3
-    ldr r4, [r1, r0, lsl#2]     /* grab card from */
+    mov r4, r0                      /* index */
+    mov r5, r1                      /* card array */
+    mov r6, r2                      /* output array */
+    mov r7, r3
 
-    str r4, [r5, r2, lsl#2]     /* put card here */
+    mov r8, #0
+    dealLoop:
+        mov r0, r4
+        mov r1, r5
+        mov r2, r6
+      @ ldr r1, adr_shflIndx
+      @ ldr r2, adr_cardVal
+        bl getCard                  /* get card return a card in r0 */
 
-    pop {r4, r5, lr}
+      @ ldr r1, adr_plyrHnd
+        str r0, [r6, r8, lsl#2]
+        add r4, r4, #1
+        bne dealLoop
+
+    pop {r4, r5, r6, r7, r8,lr}
     bx lr
 /* exit deal function */
-
-/* Game opening. deal two cards two players and two to dealer *
- * pass player hand in r0
- * pass dealer hand in r1
- * pass cardIndex address in r2
- * pass index in r3
- *    return card index in r0
- */
 
 adr_newLine: .word newLine
 adr_intOut: .word intOut
