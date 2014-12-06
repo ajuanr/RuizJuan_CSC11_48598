@@ -21,7 +21,7 @@ mess: .asciz "Value is: %d\n"
 comp: .asciz "in comparison\n"
 
 .balign 4
-shwPlyr: .asciz "You have:   "
+shwPlyr: .asciz "You have:  "
 
 .balign 4
 shwDlr: .asciz "Dealer has: "
@@ -55,12 +55,6 @@ dlrWins:  .asciz "Dealer Wins\n"
 
 .balign 4
 push: .asciz "Push\n"
-
-.balign 4
-betMsg: .asciz "How much would you like to bet: "
-
-.balign 4
-cashAvail: .asciz "You have $ %f on hand\n"
 
 /************************************
  ****** Input formats  go here ******
@@ -164,24 +158,6 @@ main:
     bl printArray
 
     /* Start the game here */
-    ldr r0, adr_betMsg
-    bl printf
-
-    ldr r0, adr_betForm
-    ldr r1, adr_betAmnt
-    bl scanf
-
-    ldr r0, adr_betAmnt
-    vldr s10, [r0]
-    ldr r0, adr_strtCash
-    vldr s11, [r0]
-    vadd.f32 s10, s10, s11
-    vcvt.f64.f32 d0, s10
-
-    ldr r0, adr_cashAvail
-    vmov r2, r3, d0
-    bl printf
-
     mov r5, #0                    /* r5 holds number of cards that have been dealt */                   
     mov r6, #0                    /* r6 holds number of cards player has been dealt */
     mov r7, #0                    /* r7 holds number of cards dealer has been dealt */
@@ -367,8 +343,3 @@ adr_hsCheck: .word hsCheck
 adr_dlrBst: .word dlrBst
 adr_plyrBst: .word plyrBst
 adr_plyrScr: .word plyrScr
-adr_betMsg: .word betMsg
-adr_betForm: .word betForm
-adr_betAmnt: .word betAmnt
-adr_cashAvail: .word cashAvail
-adr_strtCash: .word strtCash
