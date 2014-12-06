@@ -330,27 +330,32 @@ main:
            ldr r0, =plyrWins
            bl printf
 
-        /* subtract bet amount from player */
-        ldr r0, adr_balance
-        vldr s12, [r0]
-        vadd.f32 s12, s12, s10
-        vcvt.f64.f32 d0, s10
-        vmov r2, r3, d0
-        ldr r0, adr_prntBal 
+           /* add bet to player balance */
+           ldr r0, adr_balance
+           vldr s10, [r0]
+           ldr r1, adr_betAmnt
+           vldr s11, [r1]
+           vadd.f32 s10, s10, s11
+           vcvt.f64.f32 d0, s10
+           vmov r2, r3, d0
+           ldr r0, adr_prntBal 
+           bl printf
 
            b exit
        dlrWon:
            ldr r0, =dlrWins
            bl printf
 
-        /* subtract bet amount from player */
-        ldr r0, adr_balance
-        vldr s12, [r0]
-        vsub.f32 s12, s12, s10
-        vcvt.f64.f32 d0, s10
-        vmov r2, r3, d0
-        ldr r0, adr_prntBal 
-        bl printf
+           /* subtract bet amount from player */
+           ldr r0, adr_balance
+           vldr s10, [r0]
+           ldr r1, adr_betAmnt
+           vldr s11, [r1]
+           vsub.f32 s10, s10, s11
+           vcvt.f64.f32 d0, s10
+           vmov r2, r3, d0
+           ldr r0, adr_prntBal 
+           bl printf
 
            b exit
 
@@ -368,26 +373,50 @@ main:
         vmov r2, r3, d0
         ldr r0, adr_prntBal 
         bl printf
+
         b exit
 
     dlrBstd:
         /* add bet amount from player */
         ldr r0, adr_dlrBst
         bl printf
+
+        /* add bet to player balance */
+        ldr r0, adr_balance
+        vldr s10, [r0]
+        ldr r1, adr_betAmnt
+        vldr s11, [r1]
+        vadd.f32 s10, s10, s11
+        vcvt.f64.f32 d0, s10
+        vmov r2, r3, d0
+        ldr r0, adr_prntBal 
+        bl printf
+
         b exit
 
     bjWin:
         ldr r0, adr_bjMess
         bl printf
 
-        /* multiply bet by 1.5 */
+
+        /* add bet to player balance */
+        ldr r0, adr_balance
+        vldr s10, [r0]
+        ldr r1, adr_betAmnt
+        vldr s11, [r1]
+
         ldr r0, adr_bjPay
         vldr s12, [r0]
-        vmul.f32 s10, s12, s10
+     
+        vmul.f32 s11, s12, s11        /* increase original bet amount to 3:2 */
+
+        vadd.f32 s10, s10, s11
         vcvt.f64.f32 d0, s10
         vmov r2, r3, d0
         ldr r0, adr_prntBal 
         bl printf
+        
+        b exit
         
     exit:
         /* Exit stage right */
