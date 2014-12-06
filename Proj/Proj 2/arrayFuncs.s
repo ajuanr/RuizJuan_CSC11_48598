@@ -121,11 +121,12 @@ getCard:
     bx lr
 /* exit getCard function */
 
-/* Function deals the initial two card to player and dealer
+/* Function deals the initial two cards to player and dealer
  * index of next card passed in        r0
- * array holding cards passed in        r1
+ * array holding cards passed in       r1
  * array where cards are place is in   r2
- * number of cards to deal in          r3
+ * index where to place card           r3
+ * index of shuffled array             r4
  * 
 */
 .global deal
@@ -137,19 +138,12 @@ deal:
     mov r6, r2                      /* output array */
     mov r7, r3
 
-    mov r8, #0
-    dealLoop:
-        mov r0, r4
-        mov r1, r5
-        mov r2, r6
-      @ ldr r1, adr_shflIndx
-      @ ldr r2, adr_cardVal
-        bl getCard                  /* get card return a card in r0 */
+    mov r0, r4
+    mov r1, r5
+    mov r2, r6
+    bl getCard                  /* get card return a card in r0 */
 
-      @ ldr r1, adr_plyrHnd
-        str r0, [r6, r8, lsl#2]
-        add r4, r4, #1
-        bne dealLoop
+    str r0, [r6, r7, lsl#2]
 
     pop {r4, r5, r6, r7, r8,lr}
     bx lr

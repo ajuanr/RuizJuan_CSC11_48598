@@ -118,14 +118,18 @@ main:
     bl printArray
 */
 
-    mov r4, #5
-    mov r0, #0
-    ldr r1, adr_shflIndx
-    ldr r2, adr_plyrHnd
-    mov r3, r4
-    bl deal
+    mov r5, #0
+    dealLoop:
+       mov r0, r5
+       ldr r1, adr_shflIndx
+       ldr r2, adr_plyrHnd
+       mov r3, r5
+       bl deal
+       add r5, r5, #1
+       cmp r5, #7
+       bne dealLoop
 
-    mov r0, r4
+    mov r0, r5
     ldr r1, adr_plyrHnd
     bl printArray
 
