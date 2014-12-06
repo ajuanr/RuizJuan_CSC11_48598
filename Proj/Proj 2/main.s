@@ -114,6 +114,15 @@ main:
     bl printArray
 
 
+       mov r0, r6                /* sum the total */
+       ldr r1, adr_plyrHnd
+       bl sumArray               /* returns sum in r0 */
+
+       mov r1, r0 
+       ldr r0, =mess
+       bl printf
+
+
     dealDlr:
        ldr r1, adr_shflIndx
        ldr r2, adr_dlrHnd
