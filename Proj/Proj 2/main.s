@@ -128,6 +128,9 @@ main:
     ldr r1, adr_dlrHnd
     bl printArray
 
+
+    
+
         /* Exit stage right */
     add sp, sp, #4
     pop {lr}

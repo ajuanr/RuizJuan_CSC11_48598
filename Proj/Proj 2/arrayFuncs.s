@@ -21,7 +21,8 @@ cardVal:
 /* array is passed as r1 */
 .global fillArray
 fillArray:
-    push {r4, r5, r6, r7, r8, lr}        /* r8 is unused */
+     push {r4-r8, lr}
+@    push {r4, r5, r6, r7, r8, lr}        /* r8 is unused */
 
     mov r4, r0                           /* r4 holds the numbmer of elements */
     mov r5, r1                           /* r5 holds the array */
@@ -33,7 +34,8 @@ fillArray:
        cmp r7, r4
        bne fillLoop
 
-    pop {r4, r5, r6,r7, r8, lr}
+    pop {r4-r8, lr}
+@    pop {r4, r5, r6,r7, r8, lr}
     bx lr
 
 /* Print the elements of an array
@@ -71,7 +73,8 @@ printArray:
  */
 .global shuffle
 shuffle:
-    push {r4, r5, r6, r7, r8, r9, r10, lr}
+    push {r4-r10, lr}
+@    push {r4, r5, r6, r7, r8, r9, r10, lr}
 
     mov r4, r0                              /* save the number of elements */
     mov r5, r1                              /* and the array */
@@ -102,7 +105,7 @@ shuffle:
         cmp r6, #7
         bne shuffleLoop
 
-    pop {r4, r5, r6, r7, r8, r9, r10, lr}
+    pop {r4-r10, lr}
     bx lr
 /* exit shuffle function */
 
@@ -137,7 +140,7 @@ getCard:
 */
 .global deal
 deal:
-    push {r4, r5, r6, r7, r8, lr}     
+    push {r4-r8, lr}     
 
     mov r4, r0                      /* index */
     mov r5, r1                      /* card array */
@@ -151,7 +154,7 @@ deal:
 
     str r0, [r6, r7, lsl#2]
 
-    pop {r4, r5, r6, r7, r8,lr}
+    pop {r4-r8,lr}
     bx lr
 /* exit deal function */
 
@@ -165,13 +168,25 @@ deal:
  */
 .global sumArray
 sumArray:
-    push {r4, r5, r6,  lr}
+    push {r4-r8,  lr}
 
-    mov r4, r0
-    mov r5, r1
-   
+    mov r4, r0                /* save num elements */
+    mov r5, r1                /* save the array */
+    mov r6, #0                /* initialize the sum */
+    mov r7, #0                /* initialize the num of aces */
 
-    pop {r4, r5, r6,  lr}
+    mov r8, #0                /* initialize loop counter */
+    sumLoop:
+        ldr r0, [r5, r8, lsl#2]
+        add r6, r6, r0
+
+        add r8,r8, #1
+        cmp r8, r4
+        bne sumLoop
+
+    mov r0, r6                /* return the sum in r0 */
+
+    pop {r4-r8,  lr}
     bx lr
 
 
