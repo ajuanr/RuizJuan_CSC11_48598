@@ -155,6 +155,27 @@ deal:
     bx lr
 /* exit deal function */
 
+/* Function adds the values of the cards in a hand
+ * checks for aces and changes their value from 11 to 1
+ * if they would cause player to bust
+ * 
+ * pass the number of elements in  r0
+ * pass the array in               r1
+ * return the sum in               r0
+ */
+.global sumArray
+sumArray:
+    push {r4, r5, r6,  lr}
+
+    mov r4, r0
+    mov r5, r1
+   
+
+    pop {r4, r5, r6,  lr}
+    bx lr
+
+
+
 adr_newLine: .word newLine
 adr_intOut: .word intOut
 adr_cardVal: .word cardVal
