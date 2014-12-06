@@ -18,6 +18,9 @@
 mess: .asciz "Value is: %d\n"
 
 .balign 4
+comp: .asciz "in comparison\n"
+
+.balign 4
 shwPlyr: .asciz "You have:  "
 
 .balign 4
@@ -33,13 +36,16 @@ hitStand: .asciz "Do you want to hit(h) or stand(s): "
 hsCheck: .asciz "You entered %c\n"
 
 .balign 4
-hit: .asciz "you chose to hit\n"
+hit: .asciz "You chose to hit\n"
 
 .balign 4
-stand: .asciz "you chose to stand\n"
+stand: .asciz "You chose to stand\n"
 
 .balign 4
-bstMess: .asciz "You have busted\n"
+plyrBst: .asciz "You have busted\n"
+
+.balign 4
+dlrBst: .asciz "Dealer has busted\n"
 
 .balign 4
 push: .asciz "Push\n"
@@ -207,7 +213,7 @@ main:
         b choiceS
         
 
-    choiceH:
+    choiceH:                          /* player choose to get another card */
        mov r0, r5
        ldr r1, adr_shflIndx
        ldr r2, adr_plyrHnd
@@ -215,7 +221,6 @@ main:
        bl deal
        add r5, r5, #1
        add r6, r6, #1
-
 
        ldr r0, adr_shwPlyr            /* show player what they've got */
        bl printf
@@ -230,11 +235,11 @@ main:
        bl sumArray               /* returns sum in r0 */
 
        cmp r0, #21 
-       bgt busted
+       bgt plyrBstd
        
        b plyrCont
 
-    choiceS:
+    choiceS:                        /* player stands. Dealer turn */
        dealNext:
        mov r0, r5
        ldr r1, adr_shflIndx
@@ -244,7 +249,7 @@ main:
        add r5, r5, #1
        add r7, r7, #1
 
-       ldr r0, adr_shwDlr            /* show player what they've got */
+       ldr r0, adr_shwDlr            /* show player what dealer has */
        bl printf
        mov r0, r7
        ldr r1, adr_dlrHnd
@@ -256,19 +261,27 @@ main:
        mov r2, #17               /* dealer hits on soft 17 */
        bl sumArray               /* returns sum in r0 */
 
-       mov r10, r0
-       ldr r0, =mess
-       mov r1, r0
-       bl printf
+       cmp r0, #21              /* dealer has busted */ 
+       bgt dlrBstd
 
-       mov r0, r10
-       cmp r0, #17
-       bge busted
+       cmp r0, #17              /* dealer no longer hits */
+       bge checkWinner
        b dealNext
 
-    busted:
+    checkWinner:
+       ldr r0, = comp
+       bl printf
+       b exit
+
+    plyrBstd:
         /* subtract bet amount from player */
-        ldr r0, adr_bstMess
+        ldr r0, adr_plyrBst
+        bl printf
+        b exit
+
+    dlrBstd:
+        /* add bet amount from player */
+        ldr r0, adr_dlrBst
         bl printf
         b exit
 
@@ -297,4 +310,5 @@ adr_hitStand: .word hitStand
 adr_hsFormat: .word hsFormat
 adr_hsChoice: .word hsChoice
 adr_hsCheck: .word hsCheck
-adr_bstMess: .word bstMess
+adr_dlrBst: .word dlrBst
+adr_plyrBst: .word plyrBst
