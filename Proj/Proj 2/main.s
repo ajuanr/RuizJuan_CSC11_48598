@@ -18,9 +18,6 @@
 mess: .asciz "Value is: %d\n"
 
 .balign 4
-comp: .asciz "in comparison\n"
-
-.balign 4
 shwPlyr: .asciz "You have:   "
 
 .balign 4
@@ -32,14 +29,6 @@ bjMess: .asciz "Blackjack!\n"
 .balign 4
 hitStand: .asciz "Do you want to hit(h) or stand(s): "
 
-.balign 4
-hsCheck: .asciz "You entered %c\n"
-
-.balign 4
-hit: .asciz "You chose to hit\n"
-
-.balign 4
-stand: .asciz "You chose to stand\n"
 
 .balign 4
 plyrBst: .asciz "You have busted\n"
@@ -363,7 +352,6 @@ adr_bjMess: .word bjMess
 adr_hitStand: .word hitStand
 adr_hsFormat: .word hsFormat
 adr_hsChoice: .word hsChoice
-adr_hsCheck: .word hsCheck
 adr_dlrBst: .word dlrBst
 adr_plyrBst: .word plyrBst
 adr_plyrScr: .word plyrScr
