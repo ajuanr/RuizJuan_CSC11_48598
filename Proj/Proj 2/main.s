@@ -19,7 +19,7 @@
 mess: .asciz "Value is: %d\n"
 
 .balign 4
-shwPlyr: .asciz "Player has: "
+shwPlyr: .asciz "You have: "
 
 .balign 4
 shwDlr: .asciz "Dealer has: "
@@ -33,12 +33,31 @@ hitStand: .asciz "Do you want to hit(h) or stand(s): "
 .balign 4
 hsCheck: .asciz "You entered %c\n"
 
+.balign 4
+hit: .asciz "you chose to hit\n"
+
+.balign 4
+stand: .asciz "you chose to stand\n"
+
 /************************************
- ****** Input formats  go here *****
+ ****** Input formats  go here ******
  ***********************************/
 hsFormat: .asciz " %c"
 
+betForm: .asciz "%f"
+
+/***********************************
+ ******** Data goes here ***********
+ **********************************/
+.balign 4
 hsChoice: .word 0
+
+.balign 4
+strtCash: .float 10.00
+
+.balign 4
+betAmnt: .float 0
+
 
 /* arrays holding the hand of the player and dealer 
  * max number of cards with one deck is 11: A A A A 2 2 2 2 3 3 3 = 21
@@ -149,15 +168,14 @@ main:
     bl printArray
 
 
-    ldr r0, adr_shwPlyr
+    ldr r0, adr_shwPlyr            /* show player what they've got */
     bl printf
-
     mov r0, r6
     ldr r1, adr_plyrHnd
     bl printArray
 
 
-    /* Check if player has blackjack */
+    /* Check if player has blackjack  only after intial cards are dealt */
     mov r0, r6                /* sum the total */
     ldr r1, adr_plyrHnd
     bl sumArray               /* returns sum in r0 */
@@ -176,7 +194,35 @@ main:
         ldr r0, adr_hsCheck
         ldr r1, adr_hsChoice
         ldr r1, [r1]
+        mov r10, r1              /* save the choice */
         bl printf
+
+        cmp r10, #'h'
+        beq choiceH
+        b choiceS
+        
+
+    choiceH:
+       mov r0, r5
+       ldr r1, adr_shflIndx
+       ldr r2, adr_plyrHnd
+       mov r3, r6
+       bl deal
+       add r5, r5, #1
+       add r6, r6, #1
+
+
+       ldr r0, adr_shwPlyr            /* show player what they've got */
+       bl printf
+       mov r0, r6
+       ldr r1, adr_plyrHnd
+       bl printArray
+       b plyrCont
+
+    choiceS:
+       ldr r0, =stand
+       bl printf
+       b exit
 
     bjWin:
         /* multiply bet by 1.5 */
