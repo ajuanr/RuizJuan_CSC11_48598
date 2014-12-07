@@ -50,6 +50,12 @@ betMsg: .asciz "How much would you like to bet: "
 .balign 4
 prntBal: .asciz "Your balance is  $%f\n"
 
+.balign 4
+playMsg: .asciz "Do you want to play again(y)? "
+
+.balign 4
+brkMsg: .asciz "You are broke.\n"
+
 /************************************
  ****** Input formats  go here ******
  ***********************************/
@@ -68,6 +74,9 @@ dlrScr: .word 0
 
 .balign 4
 hsChoice: .word 0
+
+.balign 4
+playAns: .word 0
 
 .balign 4
 balance: .float 10.00
@@ -129,32 +138,20 @@ main:
     bl time
     bl srand
 
-    ldr r0, adr_nCard       /* print  out all cardValues */
-    ldr r0, [r0]
-    ldr r1, adr_cardVal
-@    bl printArray
-
     ldr r0, adr_nCard       /* initialize index with 0-51 */
     ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl fillArray
 
-    ldr r0, adr_nCard       /* print initialized index */
-    ldr r0, [r0]
-    ldr r1, adr_shflIndx
-@    bl printArray
-
-    ldr r0, adr_nCard        /* shuffle the index */
-    ldr r0, [r0]
+    /* Start the game here */
+    play:
+        ldr r0, adr_nCard        /* shuffle the index */
+        ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl shuffle
 
-    ldr r0, adr_nCard       /* print initialized index */
-    ldr r0, [r0]
-    ldr r1, adr_shflIndx
-@    bl printArray
-
-    /* Start the game here */
+    ldr r0, adr_newLine
+    bl printf
 
     ldr r0, adr_balance
     vldr s10, [r0]
@@ -169,17 +166,6 @@ main:
     ldr r0, adr_betForm
     ldr r1, adr_betAmnt
     bl scanf
-
-@    ldr r0, adr_betAmnt
-@    vldr s10, [r0]
-@    ldr r0, adr_balance
-@    vldr s11, [r0]
-@    vadd.f32 s10, s10, s11
-@    vcvt.f64.f32 d0, s10
-
-@    ldr r0, adr_prntBal
-@    vmov r2, r3, d0
-@    bl printf
 
     ldr r0, adr_newLine
     bl printf
@@ -233,6 +219,9 @@ main:
     beq bjWin
 
     plyrCont:
+        ldr r0, adr_newLine
+        bl printf
+
         ldr r0, adr_hitStand
         bl printf
         ldr r0, adr_hsFormat
@@ -278,10 +267,9 @@ main:
 
     choiceS:                        /* player stands. Dealer turn */
        /* save player hand */
-       ldr r1, adr_plyrScr
-       ldr r1, [r1]
-       ldr r0, =mess
-@       bl printf
+       @ldr r1, adr_plyrScr
+       @ldr r1, [r1]
+       @ldr r0, =mess
 
        ldr r0, adr_newLine
        bl printf
@@ -325,7 +313,7 @@ main:
        pushWon:
            ldr r0, =push
            bl printf
-           b exit
+           b playAgain
        plyrWon:
            ldr r0, =plyrWins
            bl printf
@@ -336,12 +324,14 @@ main:
            ldr r1, adr_betAmnt
            vldr s11, [r1]
            vadd.f32 s10, s10, s11
-           vcvt.f64.f32 d0, s10
+           vstr s10, [r0]                   /* save the new balance */
+           vcvt.f64.f32 d0, s10             /* print the  new balance */
            vmov r2, r3, d0
            ldr r0, adr_prntBal 
            bl printf
 
-           b exit
+           b playAgain
+
        dlrWon:
            ldr r0, =dlrWins
            bl printf
@@ -352,12 +342,13 @@ main:
            ldr r1, adr_betAmnt
            vldr s11, [r1]
            vsub.f32 s10, s10, s11
+           vstr s10, [r0]                   /* save the new balance */
            vcvt.f64.f32 d0, s10
            vmov r2, r3, d0
            ldr r0, adr_prntBal 
            bl printf
 
-           b exit
+           b playAgain
 
     plyrBstd:
         ldr r0, adr_plyrBst
@@ -369,12 +360,13 @@ main:
         ldr r1, adr_betAmnt
         vldr s11, [r1]
         vsub.f32 s10, s10, s11
+        vstr s10, [r0]                   /* save the new balance */
         vcvt.f64.f32 d0, s10
         vmov r2, r3, d0
         ldr r0, adr_prntBal 
         bl printf
 
-        b exit
+        b playAgain
 
     dlrBstd:
         /* add bet amount from player */
@@ -387,17 +379,18 @@ main:
         ldr r1, adr_betAmnt
         vldr s11, [r1]
         vadd.f32 s10, s10, s11
+        vstr s10, [r0]                   /* save the new balance */
+
         vcvt.f64.f32 d0, s10
         vmov r2, r3, d0
         ldr r0, adr_prntBal 
         bl printf
 
-        b exit
+        b playAgain
 
     bjWin:
         ldr r0, adr_bjMess
         bl printf
-
 
         /* add bet to player balance */
         ldr r0, adr_balance
@@ -411,15 +404,45 @@ main:
         vmul.f32 s11, s12, s11        /* increase original bet amount to 3:2 */
 
         vadd.f32 s10, s10, s11
+        vstr s10, [r0]
         vcvt.f64.f32 d0, s10
         vmov r2, r3, d0
         ldr r0, adr_prntBal 
         bl printf
         
-        b exit
+        b playAgain
+
+    playAgain:
+        /* check if player is broke */
+        ldr r0, adr_balance
+        mov r1, #0
+        vldr s10, [r0]
+        vcvt.s32.f32 s10, s10
+        vmov r2, s10
+        cmp r1, r2
+        beq broke
+
+        ldr r0, adr_newLine
+        bl printf
+
+        ldr r0, adr_playMsg
+        bl printf
+
+        ldr r0, adr_hsFormat                     /* re-use hsFormat to read in char */
+        ldr r1, adr_playAns 
+        bl scanf
         
-    exit:
+        ldr r0, adr_playAns
+        ldr r0, [r0]
+        cmp r0, #'y'
+        beq play        
+
+    broke:                                        /* player has no money remaining */
+        ldr r0, adr_brkMsg
+        bl printf
+        
         /* Exit stage right */
+    exit:
     add sp, sp, #4
     pop {lr}
     bx lr
@@ -446,3 +469,6 @@ adr_betAmnt: .word betAmnt
 adr_prntBal: .word prntBal
 adr_balance: .word balance
 adr_bjPay: .word bjPay
+adr_playMsg: .word playMsg
+adr_playAns: .word playAns
+adr_brkMsg: .word brkMsg

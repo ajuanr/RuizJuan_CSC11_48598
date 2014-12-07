@@ -198,14 +198,11 @@ sumArray:
         sub r7, r7, #1
         b aceLoop
 
-
     exit: 
     mov r0, r6                /* return the sum in r0 */
 
     pop {r4-r10,  lr}
     bx lr
-
-
 
 adr_newLine: .word newLine
 adr_intOut: .word intOut
