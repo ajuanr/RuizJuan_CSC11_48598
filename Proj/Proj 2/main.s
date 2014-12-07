@@ -143,12 +143,15 @@ main:
     ldr r1, adr_shflIndx
     bl fillArray
 
-    /* Start the game here */
-    play:
-        ldr r0, adr_nCard        /* shuffle the index */
-        ldr r0, [r0]
+    ldr r0, adr_nCard        /* shuffle the index */
+    ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl shuffle
+
+    mov r5, #0                    /* r5 holds number of cards that have been dealt */                   
+
+    /* Start the game here */
+    play:
 
     ldr r0, adr_newLine
     bl printf
@@ -170,7 +173,7 @@ main:
     ldr r0, adr_newLine
     bl printf
 
-    mov r5, #0                    /* r5 holds number of cards that have been dealt */                   
+@    mov r5, #0                    /* r5 holds number of cards that have been dealt */                   
     mov r6, #0                    /* r6 holds number of cards player has been dealt */
     mov r7, #0                    /* r7 holds number of cards dealer has been dealt */
 
@@ -237,6 +240,8 @@ main:
         
 
     choiceH:                          /* player choose to get another card */
+       ldr r0, adr_newLine            /* new line */
+       bl printf
        mov r0, r5
        ldr r1, adr_shflIndx
        ldr r2, adr_plyrHnd
@@ -266,11 +271,6 @@ main:
        b plyrCont
 
     choiceS:                        /* player stands. Dealer turn */
-       /* save player hand */
-       @ldr r1, adr_plyrScr
-       @ldr r1, [r1]
-       @ldr r0, =mess
-
        ldr r0, adr_newLine
        bl printf
        dealNext:
@@ -311,10 +311,14 @@ main:
        blt dlrWon
 
        pushWon:
+           ldr r0, adr_newLine
+           bl printf
            ldr r0, =push
            bl printf
            b playAgain
        plyrWon:
+           ldr r0, adr_newLine
+           bl printf
            ldr r0, =plyrWins
            bl printf
 
@@ -333,6 +337,8 @@ main:
            b playAgain
 
        dlrWon:
+           ldr r0, adr_newLine
+           bl printf
            ldr r0, =dlrWins
            bl printf
 
@@ -351,6 +357,8 @@ main:
            b playAgain
 
     plyrBstd:
+        ldr r0, adr_newLine
+        bl printf
         ldr r0, adr_plyrBst
         bl printf
 
@@ -415,12 +423,12 @@ main:
     playAgain:
         /* check if player is broke */
         ldr r0, adr_balance
-        mov r1, #0
         vldr s10, [r0]
         vcvt.s32.f32 s10, s10
         vmov r2, s10
-        cmp r1, r2
-        beq broke
+        mov r1, #0
+        cmp r2, r1
+        ble broke
 
         ldr r0, adr_newLine
         bl printf
