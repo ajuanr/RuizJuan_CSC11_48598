@@ -170,10 +170,17 @@ main:
     ldr r1, adr_betAmnt
     bl scanf
 
+    ldr r0, adr_balance
+    vldr s10, [r0]
+    ldr r0, adr_betAmnt
+    vldr s11, [r0]
+   
+    vcmp.f32 s10, s11
+    blt play 
+
     ldr r0, adr_newLine
     bl printf
 
-@    mov r5, #0                    /* r5 holds number of cards that have been dealt */                   
     mov r6, #0                    /* r6 holds number of cards player has been dealt */
     mov r7, #0                    /* r7 holds number of cards dealer has been dealt */
 
@@ -216,6 +223,7 @@ main:
     /* Check if player has blackjack  only after intial cards are dealt */
     mov r0, r6                /* sum the total */
     ldr r1, adr_plyrHnd
+    mov r2, #21
     bl sumArray               /* returns sum in r0 */
 
     cmp r0, #21 
@@ -268,6 +276,8 @@ main:
        ldr r1, adr_plyrScr      /* if player has not busted save the score */
        str r0, [r1]  
 
+       beq choiceS              /* don't allow hit when player has 21 */
+
        b plyrCont
 
     choiceS:                        /* player stands. Dealer turn */
@@ -295,7 +305,6 @@ main:
            bl sumArray               /* returns sum in r0 */
 
            cmp r0, #21              /* dealer has busted */ 
-           bgt dlrBstd
 
            cmp r0, #17              /* dealer no longer hits */
            bge checkWinner 
@@ -412,6 +421,8 @@ main:
         vmul.f32 s11, s12, s11        /* increase original bet amount to 3:2 */
 
         vadd.f32 s10, s10, s11
+
+        ldr r0, adr_balance
         vstr s10, [r0]
         vcvt.f64.f32 d0, s10
         vmov r2, r3, d0
