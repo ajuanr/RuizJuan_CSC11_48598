@@ -310,7 +310,6 @@ main:
            bge checkWinner 
            b dealNext
 
-/* don't seperate from dealNext */
     checkWinner:
        ldr r1, adr_plyrScr
        ldr r1, [r1]
