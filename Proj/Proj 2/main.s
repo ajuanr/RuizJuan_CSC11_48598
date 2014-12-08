@@ -181,8 +181,10 @@ main:
     vldr s10, [r0]
     ldr r0, adr_betAmnt
     vldr s11, [r0]
+
    
     vcmp.f32 s10, s11
+    vmrs apsr_nzcv, fpscr     /* move fpscr into aspr */
     blt play 
 
     ldr r0, adr_newLine
