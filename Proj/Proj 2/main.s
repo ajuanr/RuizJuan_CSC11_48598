@@ -16,7 +16,7 @@
  ***********************************/
 .balign 4
 wlcm: .asciz "\nWelcome to Blackjack.\n You start with $10\n"
-
+      .asciz "Dealer hits on soft 17\n"
 .balign 4
 mess: .asciz "Value is: %d\n"
 
@@ -464,6 +464,7 @@ main:
         ldr r0, [r0]
         cmp r0, #'y'
         beq play        
+        b exit
 
     broke:                                        /* player has no money remaining */
         ldr r0, adr_brkMsg
