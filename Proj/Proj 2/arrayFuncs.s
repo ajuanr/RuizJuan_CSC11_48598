@@ -22,7 +22,6 @@ cardVal:
 .global fillArray
 fillArray:
      push {r4-r8, lr}
-@    push {r4, r5, r6, r7, r8, lr}        /* r8 is unused */
 
     mov r4, r0                           /* r4 holds the numbmer of elements */
     mov r5, r1                           /* r5 holds the array */
@@ -35,7 +34,6 @@ fillArray:
        bne fillLoop
 
     pop {r4-r8, lr}
-@    pop {r4, r5, r6,r7, r8, lr}
     bx lr
 
 /* Print the elements of an array
@@ -74,7 +72,6 @@ printArray:
 .global shuffle
 shuffle:
     push {r4-r10, lr}
-@    push {r4, r5, r6, r7, r8, r9, r10, lr}
 
     mov r4, r0                              /* save the number of elements */
     mov r5, r1                              /* and the array */

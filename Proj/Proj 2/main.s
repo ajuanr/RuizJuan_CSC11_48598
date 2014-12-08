@@ -15,6 +15,9 @@
  ****** Output messages go here *****
  ***********************************/
 .balign 4
+wlcm: .asciz "\nWelcome to Blackjack.\n You start with $10\n"
+
+.balign 4
 mess: .asciz "Value is: %d\n"
 
 .balign 4
@@ -147,6 +150,10 @@ main:
     ldr r0, [r0]
     ldr r1, adr_shflIndx
     bl shuffle
+
+    ldr r0, =wlcm
+    bl printf
+
 
     mov r5, #0                    /* r5 holds number of cards that have been dealt */                   
 
@@ -305,6 +312,7 @@ main:
            bl sumArray               /* returns sum in r0 */
 
            cmp r0, #21              /* dealer has busted */ 
+           bgt dlrBstd
 
            cmp r0, #17              /* dealer no longer hits */
            bge checkWinner 
