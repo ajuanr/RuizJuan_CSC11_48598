@@ -16,7 +16,9 @@
  ***********************************/
 .balign 4
 wlcm: .asciz "\nWelcome to Blackjack.\n You start with $10\n"
-      .asciz "Dealer hits on soft 17\n"
+
+info: .asciz "Dealer hits on soft 17\nAces = 11\n Can be 11 or 1\n" 
+     
 .balign 4
 mess: .asciz "Value is: %d\n"
 
@@ -154,6 +156,8 @@ main:
     ldr r0, =wlcm
     bl printf
 
+    ldr r0, =info
+    bl printf
 
     mov r5, #0                    /* r5 holds number of cards that have been dealt */                   
 
