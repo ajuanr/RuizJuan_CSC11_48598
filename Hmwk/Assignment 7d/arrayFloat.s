@@ -13,7 +13,7 @@ tempArray: .skip 2048
 floatArray: .skip 2048
 
 .balign 4
-valOut: .asciz "%f " 
+valOut: .asciz "%3.1f " 
 
 .balign 4
 intOut: .asciz "%d "
@@ -39,9 +39,6 @@ testInt: .word 212
 
 .balign 4
 tstMess: .asciz "In conversion\n"
-
-.balign 4
-tstMess2: .asciz "working\n"
 
 
 .text
@@ -107,15 +104,12 @@ printFloats:
 
     mov r6, #0                           /* r6 holds the loop counter */
     floatsLoop:
-@        ldr r2, =testInt                /* DELETE: This is for testing */
         ldr r2, [r5, r6, lsl#2]          /* get the element */
 
 @         mov r1, r2
-@         bl FtoC                        /* Convert the number */
+       @  bl FtoC                        /* Convert the number */
 
-@        ldr r1, =converted
-@        vldr s0, [r1]
-
+        vmov s0, r2
         vcvt.f64.f32 d2, s0              /* convert to double for printing */
         ldr r0, =valOut
         vmov r2, r3, d2
@@ -142,7 +136,8 @@ FtoC:
     push {r4, lr}
     sub sp, sp, #8 
 
-    vldr s0, [r1]                  
+@    vldr s0, [r1]                  
+    vmov s0, r1
     vcvt.f32.s32 s0, s0            /* r1 held an int convert it to float */ 
 
     ldr r1, =thirtyTwo             /* Get registers ready to put into floaing point */
@@ -180,9 +175,6 @@ convArray:
     mov r5, r1                    /* r5 holds the input array */
     mov r6, r2                    /* r6 holds the destination array */
 
-    ldr r0, =tstMess2
-    bl printf
-
     mov r7, #0                    /* start counting from zero */
     convLoop:
        ldr r1, [r5, r7, lsl#2]
@@ -211,31 +203,20 @@ main:
 
     ldr r0, =newLine             /* seperate the printed arrays */
     bl printf
-
-    ldr r0, =tstMess        /* test DELETE */
-    bl printf
    
     mov r0, #199                /* convert the array */
     ldr r1, =tempArray
     ldr r2, =floatArray
     bl convArray
 
-    ldr r0, =tstMess        /* test Delete */
+    ldr r0, =newLine
     bl printf
+
 
     mov r0, #199                 /* print an array of float */
     ldr r1, =floatArray
     bl printFloats
 
-/*
-    ldr r0, =newLine
-    bl printf
-
-
-    mov r0, #199
-    ldr r1, =tempArray
-    bl printArray
-*/
 
            /* program complete. Exit stage right */
     add sp, sp, #4
